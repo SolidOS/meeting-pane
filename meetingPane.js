@@ -7,7 +7,7 @@
 const VideoRoomPrefix = 'https://meet.jit.si/'
 
 var UI = require('solid-ui')
-var panes = require('../paneRegistry')
+var panes = require('pane-registry')
 
 var meetingDetailsFormText = require('./meetingDetailsForm.js')
 

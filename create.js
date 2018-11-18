@@ -2,7 +2,7 @@
 //
 // This is or was part of https://github.com/solid/solid-panes/
 //
-var panes = require('../paneRegistry')
+var panes = require('pane-registry')
 
 document.addEventListener('DOMContentLoaded', function () {
   var UI = require('mashlib')
