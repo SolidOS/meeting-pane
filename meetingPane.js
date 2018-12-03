@@ -1,4 +1,4 @@
-/*   Meeting materials and tools Pane
+i/*   Meeting materials and tools Pane
 **
 **  Putting together some of the tools we have to manage a Meeting
 */
@@ -803,11 +803,15 @@ module.exports = {
         var iframe = containerDiv.appendChild(dom.createElement('iframe'))
         // iframe.setAttribute('sandbox', '') // All restrictions
         iframe.setAttribute('src', target.uri)
-        // iframe.setAttribute('style', 'height: 350px; border: 0; margin: 0; padding: 0; resize:both; width: 100%;')
-        iframe.setAttribute('style', 'border: none; margin: 0; padding: 0; height: 100%; width: 100%; resize: both; overflow:scroll;')
+        // See https://stackoverflow.com/questions/325273/make-iframe-to-fit-100-of-containers-remaining-height
+        // Set the container position (sic) so it becaomes a 100% reference for the size of the iframe height 100%
+        containerDiv.setAttribute('style', 'position: relative; top: 0px; left:0px; right:0px; resize: both; overflow:scroll; min-width: 30em; min-height: 30em;')
+        // iframe.setAttribute('style', 'height: 350px; border: 0; margin: 0; padding: 0; resize:both; overflow:scroll; width: 100%;')
+        // iframe.setAttribute('style', 'border: none; margin: 0; padding: 0; height: 100%; width: 100%; resize: both; overflow:scroll;')
+        iframe.setAttribute('style', 'border: none; margin: 0; padding: 0; height: 100%; width: 100%;')
         // Following https://dev.chromium.org/Home/chromium-security/deprecating-permissions-in-cross-origin-iframes :
         iframe.setAttribute('allow', 'getUserMedia') // Allow iframe to request camera and mic
-        containerDiv.style.resize = 'none' // Remove scroll bars on outer div - don't seem to work so well
+        // containerDiv.style.resize = 'none' // Remove scroll bars on outer div - don't seem to work so well
         containerDiv.style.padding = 0
       }
       var renderPeoplePicker = function () {
