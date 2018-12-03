@@ -1,4 +1,4 @@
-i/*   Meeting materials and tools Pane
+/*   Meeting materials and tools Pane
 **
 **  Putting together some of the tools we have to manage a Meeting
 */
