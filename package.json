@@ -1,6 +1,6 @@
 {
   "name": "meeting-pane",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Solid-compatible Panes: meeting collaborative tool",
   "main": "./meetingPane.js",
   "scripts": {
