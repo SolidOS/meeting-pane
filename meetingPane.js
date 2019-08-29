@@ -6,15 +6,18 @@
 // const VideoRoomPrefix = 'https://appear.in/'
 const VideoRoomPrefix = 'https://meet.jit.si/'
 
-var UI = require('solid-ui')
-var panes = require('pane-registry')
+const UI = require('solid-ui')
+const panes = require('pane-registry')
+const ns = UI.ns
 
-var meetingDetailsFormText = require('./meetingDetailsForm.js')
+const meetingDetailsFormText = require('./meetingDetailsForm.js')
 
 module.exports = {
   icon: UI.icons.iconBase + 'noun_66617.svg',
 
   name: 'meeting',
+
+  audience: [ns.solid('PowerUser')],
 
   label: function (subject) {
     var kb = UI.store
