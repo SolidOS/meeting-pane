@@ -8,12 +8,13 @@ document.addEventListener('DOMContentLoaded', function () {
   var UI = require('mashlib')
   var appPathSegment = 'meetulator.timbl.com'
 
-  var inputStyle = 'background-color: #eef; padding: 0.5em;  border: .5em solid white; font-size: 150%; text-align: center;' //  ;
+  var inputStyle =
+    'background-color: #eef; padding: 0.5em;  border: .5em solid white; font-size: 150%; text-align: center;' //  ;
   var dom = document
 
   var div = document.getElementById('FormTarget')
 
-  UI.authn.checkUser()  // kick off async operation
+  UI.authn.checkUser() // kick off async operation
 
   // //////////////////////////////  Reproduction: spawn a new instance
   //
@@ -21,10 +22,11 @@ document.addEventListener('DOMContentLoaded', function () {
   //
 
   var newInstanceButtonDiv = function () {
-    return UI.authn.newAppInstance(dom,
-      { noun: 'meeting',
-        appPathSegment: appPathSegment},
-      initializeNewInstanceInWorkspace)
+    return UI.authn.newAppInstance(
+      dom,
+      { noun: 'meeting', appPathSegment: appPathSegment },
+      initializeNewInstanceInWorkspace
+    )
   } // newInstanceButtonDiv
 
   // ///////////////////////  Create new document files for new instance of app
@@ -40,12 +42,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
   var initializeNewInstanceAtBase = function (thisInstance, newBase) {
     var pane = panes.byName('meeting')
-    pane.mint(newBase)
-      .then((newInstance) => {
+    pane
+      .mint(newBase)
+      .then(newInstance => {
         panes.getOutliner(dom).GotoSubject(newInstance, true, undefined, true)
         div.removeChild(d)
       })
-      .catch((e) => {
+      .catch(e => {
         div.textContent = 'Error making new meeting: ' + e
       })
   }

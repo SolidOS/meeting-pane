@@ -1,2 +1,3 @@
 # meeting-pane
-Bring together schedule, people, materials, discussion around a meeting. 
+
+Bring together schedule, people, materials, discussion around a meeting.
