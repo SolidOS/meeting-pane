@@ -1,7 +1,8 @@
 /*   Meeting materials and tools Pane
-**
-**  Putting together some of the tools we have to manage a Meeting
-*/
+ **
+ **  Putting together some of the tools we have to manage a Meeting
+ */
+/* global $rdf */
 
 // const VideoRoomPrefix = 'https://appear.in/'
 const VideoRoomPrefix = 'https://meet.jit.si/'
@@ -39,7 +40,8 @@ module.exports = {
     return new Promise(function (resolve, reject) {
       var kb = UI.store
       var ns = UI.ns
-      options.newInstance = options.newInstance || kb.sym(options.newBase + 'index.ttl#this')
+      options.newInstance =
+        options.newInstance || kb.sym(options.newBase + 'index.ttl#this')
       var meeting = options.newInstance
       var meetingDoc = meeting.doc()
 
@@ -51,7 +53,12 @@ module.exports = {
 
       kb.add(meeting, ns.rdf('type'), ns.meeting('Meeting'), meetingDoc)
       kb.add(meeting, ns.dc('created'), new Date(), meetingDoc)
-      kb.add(meeting, ns.ui('backgroundColor'), new $rdf.Literal('#ddddcc', undefined, ns.xsd('color')), meetingDoc)
+      kb.add(
+        meeting,
+        ns.ui('backgroundColor'),
+        new $rdf.Literal('#ddddcc', undefined, ns.xsd('color')),
+        meetingDoc
+      )
       var toolList = new $rdf.Collection()
       kb.add(meeting, ns.meeting('toolList'), toolList, meetingDoc)
 
@@ -67,7 +74,8 @@ module.exports = {
           } else {
             reject(new Error('Error writing meeting configuration: ' + message))
           }
-        })
+        }
+      )
     })
   },
 
@@ -118,10 +126,12 @@ module.exports = {
             tabs.refresh()
             resetTools()
           } else {
-            message = 'FAILED to save new thing at: ' + meetingDoc + ' : ' + message
+            message =
+              'FAILED to save new thing at: ' + meetingDoc + ' : ' + message
             complain(message)
           }
-        })
+        }
+      )
     }
 
     var saveAppDocumentLinkAndAddNewThing = function (tool, thing, pred) {
@@ -140,7 +150,8 @@ module.exports = {
           } else {
             complain('FAILED to save new tool at: ' + thing + ' : ' + message)
           }
-        })
+        }
+      )
     }
 
     var makeToolNode = function (target, pred, label, iconURI) {
@@ -168,19 +179,26 @@ module.exports = {
       const uri = page.uri
       if (!uri.match(initialPrefix)) return page
       if (uri.startsWith(finalPrefix)) return page // Already done
-      const map = uri.replace(initialPrefix, finalPrefix) + '&key=' + myPersonalApiKEY
+      const map =
+        uri.replace(initialPrefix, finalPrefix) + '&key=' + myPersonalApiKEY
       console.log('Converted Google Map URI! ' + map)
       return $rdf.sym(map)
     }
 
     // ////////////////////  DRAG and Drop
 
-    var handleDroppedThing = function (target) { // @@ idea: look
+    var handleDroppedThing = function (target) {
+      // @@ idea: look
       return new Promise(function (resolve, reject) {
         // Add a meeting tab for a web resource.  Alas many resource canot be framed
         // as they block framing, or are insecure.
         var addIframeTool = function (target) {
-          var tool = makeToolNode(target, UI.ns.wf('attachment'), UI.utils.label(target), null)
+          var tool = makeToolNode(
+            target,
+            UI.ns.wf('attachment'),
+            UI.utils.label(target),
+            null
+          )
           kb.add(tool, UI.ns.meeting('view'), 'iframe', meetingDoc)
         }
 
@@ -198,7 +216,8 @@ module.exports = {
             predicate: ns.meeting('attachmentTool'),
             tabTitle: 'Links',
             view: 'link', // The pane to be used when it is viewed
-            noIndexHTML: true}
+            noIndexHTML: true
+          }
           return makeNewPaneTool(toolObject, newPaneOptions)
         }
 
@@ -209,14 +228,20 @@ module.exports = {
           var obj = pref ? kb.sym(pref) : target
           var group = kb.any(meeting, ns.meeting('attendeeGroup'))
           var addPersonToGroup = function (obj, group) {
-            var ins = [$rdf.st(group, UI.ns.vcard('hasMember'), obj, group.doc())] // @@@ Complex rules about webid?
-            var name = kb.any(obj, ns.vcard('fn')) || kb.any(obj, ns.foaf('name'))
+            var ins = [
+              $rdf.st(group, UI.ns.vcard('hasMember'), obj, group.doc())
+            ] // @@@ Complex rules about webid?
+            var name =
+              kb.any(obj, ns.vcard('fn')) || kb.any(obj, ns.foaf('name'))
             if (name) {
               ins.push($rdf.st(obj, UI.ns.vcard('fn'), name, group.doc()))
             }
-            kb.fetcher.nowOrWhenFetched(group.doc(), undefined, function (ok, body) {
+            kb.fetcher.nowOrWhenFetched(group.doc(), undefined, function (
+              ok,
+              body
+            ) {
               if (!ok) {
-                complain('Can\'t read group to add person' + group)
+                complain("Can't read group to add person" + group)
                 return
               }
               kb.updater.update([], ins, function (uri, ok, body) {
@@ -231,20 +256,25 @@ module.exports = {
             addPersonToGroup(obj, group)
             return
           }
-          makeParticipantsGroup().then(function (options) {
-            var group = options.newInstance
-            addPersonToGroup(obj, group)
-            kb.fetcher.putBack(meetingDoc, {contentType: 'text/turtle'}).then(function (xhr) {
-              console.log('Particiants Group created: ' + group)
+          makeParticipantsGroup()
+            .then(function (options) {
+              var group = options.newInstance
+              addPersonToGroup(obj, group)
+              kb.fetcher
+                .putBack(meetingDoc, { contentType: 'text/turtle' })
+                .then(function (xhr) {
+                  console.log('Particiants Group created: ' + group)
+                })
             })
-          }).catch(function (err) {
-            complain(err)
-          })
+            .catch(function (err) {
+              complain(err)
+            })
         }
 
         console.log('Dropped on thing ' + target) // icon was: UI.icons.iconBase + 'noun_25830.svg'
         var u = target.uri
-        if (u.startsWith('http:') && u.indexOf('#') < 0) { // insecure Plain document
+        if (u.startsWith('http:') && u.indexOf('#') < 0) {
+          // insecure Plain document
           addLink(target)
           return resolve(target)
         }
@@ -252,12 +282,22 @@ module.exports = {
           function addAttachmentTab (target) {
             target = googleMapsSpecial(target)
             console.log('make web page attachement tab ' + target) // icon was: UI.icons.iconBase + 'noun_25830.svg'
-            var tool = makeToolNode(target, UI.ns.wf('attachment'), UI.utils.label(target), null)
+            var tool = makeToolNode(
+              target,
+              UI.ns.wf('attachment'),
+              UI.utils.label(target),
+              null
+            )
             kb.add(tool, UI.ns.meeting('view'), 'iframe', meetingDoc)
             return resolve(target)
           }
           if (!ok) {
-            console.log('Error looking up dropped thing, will just add it anyway. ' + target + ': ' + mess)
+            console.log(
+              'Error looking up dropped thing, will just add it anyway. ' +
+                target +
+                ': ' +
+                mess
+            )
             return addAttachmentTab(target) // You can still try iframing it.  (Could also add to list of links in PersonTR widgets)
           } else {
             var obj = target
@@ -265,18 +305,24 @@ module.exports = {
             for (var ty in types) {
               console.log('    drop object type includes: ' + ty)
             }
-            if (ns.vcard('Individual').uri in types || ns.foaf('Person').uri in types || ns.foaf('Agent').uri in types) {
+            if (
+              ns.vcard('Individual').uri in types ||
+              ns.foaf('Person').uri in types ||
+              ns.foaf('Agent').uri in types
+            ) {
               addParticipant(target)
               return resolve(target)
             }
-            if (u.startsWith('https:') && u.indexOf('#') < 0) { // Plain secure document
+            if (u.startsWith('https:') && u.indexOf('#') < 0) {
+              // Plain secure document
               // can we iframe it?
               var hh = kb.fetcher.getHeader(target, 'x-frame-options')
               var ok2 = true
               if (hh) {
                 for (var j = 0; j < hh.length; j++) {
                   console.log('x-frame-options: ' + hh[j])
-                  if (hh[j].indexOf('sameorigin') < 0) {  // (and diff origin @@)
+                  if (hh[j].indexOf('sameorigin') < 0) {
+                    // (and diff origin @@)
                     ok2 = false
                   }
                   if (hh[j].indexOf('deny') < 0) {
@@ -299,23 +345,30 @@ module.exports = {
 
     // When a set of URIs are dropped on the tabs
     var droppedURIHandler = function (uris) {
-      Promise.all(uris.map(function (u) {
-        var target = $rdf.sym(u) // Attachment needs text label to disinguish I think not icon.
-        return handleDroppedThing(target) // can add to meetingDoc but must be sync
-      })).then(function (a) {
+      Promise.all(
+        uris.map(function (u) {
+          var target = $rdf.sym(u) // Attachment needs text label to disinguish I think not icon.
+          return handleDroppedThing(target) // can add to meetingDoc but must be sync
+        })
+      ).then(function (a) {
         saveBackMeetingDoc()
       })
     }
 
     var droppedFileHandler = function (files) {
-      UI.widgets.uploadFiles(kb.fetcher, files, meeting.dir().uri + 'Files', meeting.dir().uri + 'Pictures',
+      UI.widgets.uploadFiles(
+        kb.fetcher,
+        files,
+        meeting.dir().uri + 'Files',
+        meeting.dir().uri + 'Pictures',
         function (theFile, destURI) {
           if (theFile.type.startsWith('image/')) {
             makePicturesFolder('Files') // If necessary
           } else {
             makeMaterialsFolder('Pictures')
           }
-        })
+        }
+      )
     }
 
     // //////////////////////////////////////////////////////  end of drag drop
@@ -329,7 +382,12 @@ module.exports = {
       }
       console.log('Participant group: ' + group)
 
-      var tool = makeToolNode(group, ns.meeting('particpants'), 'Particpants', UI.icons.iconBase + 'noun_339237.svg') // group: noun_339237.svg  'noun_15695.svg'
+      var tool = makeToolNode(
+        group,
+        ns.meeting('particpants'),
+        'Particpants',
+        UI.icons.iconBase + 'noun_339237.svg'
+      ) // group: noun_339237.svg  'noun_15695.svg'
       kb.add(tool, UI.ns.meeting('view'), 'peoplePicker', meetingDoc)
       saveBackMeetingDoc()
     }
@@ -445,7 +503,14 @@ module.exports = {
     //   Make Sub-meeting of meeting
 
     var makeMeeting = function (toolObject) {
-      UI.widgets.askName(dom, kb, parameterCell, ns.foaf('name'), UI.ns.meeting('Meeting'))
+      UI.widgets
+        .askName(
+          dom,
+          kb,
+          parameterCell,
+          ns.foaf('name'),
+          UI.ns.meeting('Meeting')
+        )
         .then(function (name) {
           if (!name) {
             return resetTools()
@@ -455,7 +520,8 @@ module.exports = {
             newBase: meetingBase + URIsegment + '/', // @@@ sanitize
             predicate: UI.ns.meeting('subMeeting'),
             tabTitle: name,
-            pane: panes.meeting }
+            pane: panes.meeting
+          }
           return makeNewPaneTool(toolObject, options)
         })
         .catch(function (e) {
@@ -472,36 +538,69 @@ module.exports = {
     function makeNewPaneTool (toolObject, options) {
       return new Promise(function (resolve, reject) {
         var kb = UI.store
-        if (!options.useExisting) { // useExisting means use existing object in new role
+        if (!options.useExisting) {
+          // useExisting means use existing object in new role
           var existing = kb.any(meeting, options.predicate)
           if (existing) {
-            if (toolObject.limit && toolObject.limit === 1 && !toolObject.shareTab) {
-              complain('Already have ' + existing + ' as ' + UI.utils.label(options.predicate))
+            if (
+              toolObject.limit &&
+              toolObject.limit === 1 &&
+              !toolObject.shareTab
+            ) {
+              complain(
+                'Already have ' +
+                  existing +
+                  ' as ' +
+                  UI.utils.label(options.predicate)
+              )
               complain('Cant have two')
               return resolve(null)
-            } if (toolObject.shareTab) { // return existing one
-              console.log('Using existing ' + existing + ' as ' + UI.utils.label(options.predicate))
-              return resolve({ me: me, newInstance: existing, instanceClass: options.instanceClass })
+            }
+            if (toolObject.shareTab) {
+              // return existing one
+              console.log(
+                'Using existing ' +
+                  existing +
+                  ' as ' +
+                  UI.utils.label(options.predicate)
+              )
+              return resolve({
+                me: me,
+                newInstance: existing,
+                instanceClass: options.instanceClass
+              })
             }
           }
         }
-        if (!me && !options.me) reject(new Error('Username not defined for new tool'))
+        if (!me && !options.me)
+          reject(new Error('Username not defined for new tool'))
         options.me = options.me || me
-        options.newInstance = options.useExisting || options.newInstance || kb.sym(options.newBase + 'index.ttl#this')
+        options.newInstance =
+          options.useExisting ||
+          options.newInstance ||
+          kb.sym(options.newBase + 'index.ttl#this')
 
-        options.pane.mintNew(options)
+        options.pane
+          .mintNew(options)
           .then(function (options) {
-            var tool = makeToolNode(options.newInstance, options.predicate,
-              options.tabTitle, options.pane.icon)
+            var tool = makeToolNode(
+              options.newInstance,
+              options.predicate,
+              options.tabTitle,
+              options.pane.icon
+            )
             if (options.view) {
               kb.add(tool, UI.ns.meeting('view'), options.view, meetingDoc)
             }
             saveBackMeetingDoc()
-            kb.fetcher.putBack(meetingDoc, {contentType: 'text/turtle'}).then(function (xhr) {
-              resolve(options)
-            }).catch(function (err) {
-              reject(err)
-            })
+            kb.fetcher
+              .putBack(meetingDoc, { contentType: 'text/turtle' })
+              .then(function (xhr) {
+                resolve(options)
+              })
+              .catch(function (err) {
+                reject(err)
+              })
           })
           .catch(function (err) {
             complain(err)
@@ -525,8 +624,12 @@ module.exports = {
       var newInstance = kb.sym(newBase + 'config.ttl#this')
       var stateStore = kb.sym(newBase + 'state.ttl')
 
-      kb.add(newInstance, ns.dc('title'), (kb.anyValue(meeting,
-         ns.cal('summary')) || 'Meeting ') + ' actions', appDoc)
+      kb.add(
+        newInstance,
+        ns.dc('title'),
+        (kb.anyValue(meeting, ns.cal('summary')) || 'Meeting ') + ' actions',
+        appDoc
+      )
       kb.add(newInstance, ns.wf('issueClass'), ns.wf('Task'), appDoc)
       kb.add(newInstance, ns.wf('initialState'), ns.wf('Open'), appDoc)
       kb.add(newInstance, ns.wf('stateStore'), stateStore, appDoc)
@@ -536,8 +639,17 @@ module.exports = {
 
       // Flag its type in the chat itself as well as in the master meeting config file
       kb.add(newInstance, ns.rdf('type'), ns.wf('Tracker'), appDoc)
-      var tool = makeToolNode(newInstance, ns.meeting('actions'), 'Actions', UI.icons.iconBase + 'noun_17020.svg')
-      saveAppDocumentLinkAndAddNewThing(tool, newInstance, ns.meeting('actions'))
+      var tool = makeToolNode(
+        newInstance,
+        ns.meeting('actions'),
+        'Actions',
+        UI.icons.iconBase + 'noun_17020.svg'
+      )
+      saveAppDocumentLinkAndAddNewThing(
+        tool,
+        newInstance,
+        ns.meeting('actions')
+      )
     }
 
     var makeChat = function (toolObject) {
@@ -551,8 +663,12 @@ module.exports = {
 
       kb.add(messageStore, ns.rdf('type'), ns.meeting('Chat'), messageStore)
 
-      var tool = makeToolNode(messageStore, ns.meeting('chat'), 'Chat',
-        UI.icons.iconBase + 'noun_346319.svg')
+      var tool = makeToolNode(
+        messageStore,
+        ns.meeting('chat'),
+        'Chat',
+        UI.icons.iconBase + 'noun_346319.svg'
+      )
       saveAppDocumentLinkAndAddNewThing(tool, messageStore, ns.meeting('chat'))
     }
 
@@ -564,14 +680,25 @@ module.exports = {
         console.log('Ignored - already have a videoCallPage')
         return // already got one
       }
-      kb.add(newInstance, ns.rdf('type'), ns.meeting('VideoCallPage'), meetingDoc)
-      var tool = makeToolNode(newInstance, ns.meeting('videoCallPage'), 'Video call', UI.icons.iconBase + 'noun_260227.svg')
+      kb.add(
+        newInstance,
+        ns.rdf('type'),
+        ns.meeting('VideoCallPage'),
+        meetingDoc
+      )
+      var tool = makeToolNode(
+        newInstance,
+        ns.meeting('videoCallPage'),
+        'Video call',
+        UI.icons.iconBase + 'noun_260227.svg'
+      )
       kb.add(tool, ns.meeting('view'), 'iframe', meetingDoc)
       saveBackMeetingDoc()
     }
 
     var makeAttachment = function (toolObject) {
-      UI.widgets.askName(dom, kb, parameterCell, ns.log('uri'), UI.ns.rdf('Resource'))
+      UI.widgets
+        .askName(dom, kb, parameterCell, ns.log('uri'), UI.ns.rdf('Resource'))
         .then(function (uri) {
           if (!uri) {
             return resetTools()
@@ -579,7 +706,12 @@ module.exports = {
           var kb = UI.store
           var ns = UI.ns
           var target = kb.sym(uri)
-          var tool = makeToolNode(target, ns.wf('attachment'), UI.utils.label(target), null)
+          var tool = makeToolNode(
+            target,
+            ns.wf('attachment'),
+            UI.utils.label(target),
+            null
+          )
           kb.add(tool, ns.meeting('view'), 'iframe', meetingDoc)
           saveBackMeetingDoc()
         })
@@ -592,27 +724,42 @@ module.exports = {
       var kb = UI.store
       var ns = UI.ns
       var target = meeting.dir()
-      if (toolObject.limit && toolObject.limit === 1 && kb.holds(meeting, ns.wf('sharingControl'))) {
+      if (
+        toolObject.limit &&
+        toolObject.limit === 1 &&
+        kb.holds(meeting, ns.wf('sharingControl'))
+      ) {
         complain('Ignored - already have ' + UI.utils.label(options.predicate))
         return
       }
-      var tool = makeToolNode(target, ns.wf('sharingControl'), 'Sharing', UI.icons.iconBase + 'noun_123691.svg')
+      var tool = makeToolNode(
+        target,
+        ns.wf('sharingControl'),
+        'Sharing',
+        UI.icons.iconBase + 'noun_123691.svg'
+      )
       kb.add(tool, ns.meeting('view'), 'sharing', meetingDoc)
       saveBackMeetingDoc()
     }
 
-    var makeNewMeeting = function () { // @@@ make option of continuing series
-      var appDetails = {noun: 'meeting'}
+    var makeNewMeeting = function () {
+      // @@@ make option of continuing series
+      var appDetails = { noun: 'meeting' }
       var gotWS = function (ws, base) {
-        thisPane.mintNew({newBase: base})
+        thisPane
+          .mintNew({ newBase: base })
           .then(function (options) {
             var newInstance = options.newInstance
             parameterCell.removeChild(mintUI)
             var p = parameterCell.appendChild(dom.createElement('p'))
             p.setAttribute('style', 'font-size: 140%;')
             p.innerHTML =
-              "Your <a target='_blank' href='" + newInstance.uri + "'><b>new meeting</b></a> is ready to be set up. " +
-              "<br/><br/><a target='_blank' href='" + newInstance.uri + "'>Go to your new meeting.</a>"
+              "Your <a target='_blank' href='" +
+              newInstance.uri +
+              "'><b>new meeting</b></a> is ready to be set up. " +
+              "<br/><br/><a target='_blank' href='" +
+              newInstance.uri +
+              "'>Go to your new meeting.</a>"
           })
           .catch(function (err) {
             parameterCell.removeChild(mintUI)
@@ -626,20 +773,73 @@ module.exports = {
     // //////////////////////////////////////////////////////////// end of new tab creation functions
 
     var toolIcons = [
-      {icon: 'noun_339237.svg', maker: makeGroup, hint: 'Make a group of people', limit: 1},
-      {icon: 'noun_346777.svg', maker: makePoll, hint: 'Make a poll to schedule the meeting'}, // When meet THIS or NEXT time
-      {icon: 'noun_48218.svg', maker: makeAgenda, limit: 1, hint: 'Add an agenda list', disabled: true}, // When meet THIS or NEXT time
-      {icon: 'noun_79217.svg', maker: makePad, hint: 'Add a shared notepad'},
-      {icon: 'noun_346319.svg', maker: makeChat, limit: 1, hint: 'Add a chat channel for the meeting'},
-      {icon: 'noun_17020.svg', maker: makeActions, limit: 1, hint: 'Add a list of action items'}, // When meet THIS or NEXT time
-      {icon: 'noun_260227.svg', maker: makeVideoCall, limit: 1, hint: 'Add a video call for the meeting'},
-      {icon: 'noun_25830.svg', maker: makeAttachment, hint: 'Attach meeting materials', disabled: false},
-      {icon: 'noun_123691.svg', maker: makeSharing, limit: 1, hint: 'Control Sharing', disabled: false},
-      {icon: 'noun_66617.svg', maker: makeMeeting, hint: 'Make a sub meeting', disabled: false}
+      {
+        icon: 'noun_339237.svg',
+        maker: makeGroup,
+        hint: 'Make a group of people',
+        limit: 1
+      },
+      {
+        icon: 'noun_346777.svg',
+        maker: makePoll,
+        hint: 'Make a poll to schedule the meeting'
+      }, // When meet THIS or NEXT time
+      {
+        icon: 'noun_48218.svg',
+        maker: makeAgenda,
+        limit: 1,
+        hint: 'Add an agenda list',
+        disabled: true
+      }, // When meet THIS or NEXT time
+      { icon: 'noun_79217.svg', maker: makePad, hint: 'Add a shared notepad' },
+      {
+        icon: 'noun_346319.svg',
+        maker: makeChat,
+        limit: 1,
+        hint: 'Add a chat channel for the meeting'
+      },
+      {
+        icon: 'noun_17020.svg',
+        maker: makeActions,
+        limit: 1,
+        hint: 'Add a list of action items'
+      }, // When meet THIS or NEXT time
+      {
+        icon: 'noun_260227.svg',
+        maker: makeVideoCall,
+        limit: 1,
+        hint: 'Add a video call for the meeting'
+      },
+      {
+        icon: 'noun_25830.svg',
+        maker: makeAttachment,
+        hint: 'Attach meeting materials',
+        disabled: false
+      },
+      {
+        icon: 'noun_123691.svg',
+        maker: makeSharing,
+        limit: 1,
+        hint: 'Control Sharing',
+        disabled: false
+      },
+      {
+        icon: 'noun_66617.svg',
+        maker: makeMeeting,
+        hint: 'Make a sub meeting',
+        disabled: false
+      }
     ] // 'noun_66617.svg'
 
-    var settingsForm = $rdf.sym('https://solid.github.io/solid-panes/meeting/meetingDetailsForm.ttl#settings')
-    $rdf.parse(meetingDetailsFormText, kb, settingsForm.doc().uri, 'text/turtle') // Load form directly
+    var settingsForm = $rdf.sym(
+      'https://solid.github.io/solid-panes/meeting/meetingDetailsForm.ttl#settings'
+    )
+    $rdf.parse(
+      meetingDetailsFormText,
+      kb,
+      settingsForm.doc().uri,
+      'text/turtle'
+    ) // Load form directly
 
     var iconStyle = 'padding: 1em; width: 3em; height: 3em;'
     var iconCell = toolBar.appendChild(dom.createElement('td'))
@@ -653,35 +853,37 @@ module.exports = {
 
     var selectNewTool = function (event) {
       visible = !visible
-      star.setAttribute('style', iconStyle + (visible ? 'background-color: yellow;' : ''))
+      star.setAttribute(
+        'style',
+        iconStyle + (visible ? 'background-color: yellow;' : '')
+      )
       styleTheIcons(visible ? '' : 'display: none;')
     }
 
     var loginOutButton
-    UI.authn.checkUser()
-      .then(webId => {
-        if (webId) {
-          me = webId
+    UI.authn.checkUser().then(webId => {
+      if (webId) {
+        me = webId
+        star.addEventListener('click', selectNewTool)
+        star.setAttribute('style', iconStyle)
+        return
+      }
+
+      loginOutButton = UI.authn.loginStatusBox(dom, webIdUri => {
+        if (webIdUri) {
+          me = kb.sym(webIdUri)
+          parameterCell.removeChild(loginOutButton)
+          // loginOutButton.setAttribute('',iconStyle) // make it match the icons
           star.addEventListener('click', selectNewTool)
           star.setAttribute('style', iconStyle)
-          return
+        } else {
+          console.log('(Logged out)')
+          me = null
         }
-
-        loginOutButton = UI.authn.loginStatusBox(dom, (webIdUri) => {
-          if (webIdUri) {
-            me = kb.sym(webIdUri)
-            parameterCell.removeChild(loginOutButton)
-            // loginOutButton.setAttribute('',iconStyle) // make it match the icons
-            star.addEventListener('click', selectNewTool)
-            star.setAttribute('style', iconStyle)
-          } else {
-            console.log('(Logged out)')
-            me = null
-          }
-        })
-        loginOutButton.setAttribute('style', 'margin: 0.5em 1em;')
-        parameterCell.appendChild(loginOutButton)
       })
+      loginOutButton.setAttribute('style', 'margin: 0.5em 1em;')
+      parameterCell.appendChild(loginOutButton)
+    })
 
     var iconArray = []
     for (var i = 0; i < toolIcons.length; i++) {
@@ -733,7 +935,8 @@ module.exports = {
         s.textContent = label
         s.setAttribute('style', 'margin-left: 0.7em')
         var icon = kb.any(item, ns.meeting('icon'))
-        if (icon) { // Make sure the icon is cleanly on the left of the label
+        if (icon) {
+          // Make sure the icon is cleanly on the left of the label
           var table = div.appendChild(dom.createElement('table'))
           var tr = table.appendChild(dom.createElement('tr'))
           var left = tr.appendChild(dom.createElement('td'))
@@ -764,31 +967,49 @@ module.exports = {
     var renderTabSettings = function (containerDiv, subject) {
       containerDiv.innerHTML = ''
       containerDiv.style += 'border-color: #eed;'
-      containerDiv.appendChild(dom.createElement('h3')).textContent = 'Adjust this tab'
+      containerDiv.appendChild(dom.createElement('h3')).textContent =
+        'Adjust this tab'
       if (kb.holds(subject, ns.rdf('type'), ns.meeting('Tool'))) {
-        var form = $rdf.sym('https://solid.github.io/solid-panes/meeting/meetingDetailsForm.ttl#settings')
-        UI.widgets.appendForm(document, containerDiv, {}, subject, form, meeting.doc(), complainIfBad)
-        var delButton = UI.widgets.deleteButtonWithCheck(dom, containerDiv, 'tab', function () {
-          var toolList = kb.the(meeting, ns.meeting('toolList'))
-          for (var i = 0; i < toolList.elements.length; i++) {
-            if (toolList.elements[i].sameTerm(subject)) {
-              toolList.elements.splice(i, 1)
-              break
+        var form = $rdf.sym(
+          'https://solid.github.io/solid-panes/meeting/meetingDetailsForm.ttl#settings'
+        )
+        UI.widgets.appendForm(
+          document,
+          containerDiv,
+          {},
+          subject,
+          form,
+          meeting.doc(),
+          complainIfBad
+        )
+        var delButton = UI.widgets.deleteButtonWithCheck(
+          dom,
+          containerDiv,
+          'tab',
+          function () {
+            var toolList = kb.the(meeting, ns.meeting('toolList'))
+            for (var i = 0; i < toolList.elements.length; i++) {
+              if (toolList.elements[i].sameTerm(subject)) {
+                toolList.elements.splice(i, 1)
+                break
+              }
             }
+            var target = kb.any(subject, ns.meeting('target'))
+            var ds = kb
+              .statementsMatching(subject)
+              .concat(kb.statementsMatching(undefined, undefined, subject))
+              .concat(kb.statementsMatching(meeting, undefined, target))
+            kb.remove(ds) // Remove all links to and from the tab node
+            saveBackMeetingDoc()
           }
-          var target = kb.any(subject, ns.meeting('target'))
-          var ds = kb.statementsMatching(subject)
-            .concat(kb.statementsMatching(undefined, undefined, subject))
-            .concat(kb.statementsMatching(meeting, undefined, target))
-          kb.remove(ds) // Remove all links to and from the tab node
-          saveBackMeetingDoc()
-        })
+        )
         delButton.setAttribute('style', 'width: 1.5em; height: 1.5em;')
         // delButton.setAttribute('class', '')
         // delButton.setAttribute('style', 'height: 2em; width: 2em; margin: 1em; border-radius: 0.5em; padding: 1em; font-size: 120%; background-color: red; color: white;')
         // delButton.textContent = 'Delete this tab'
       } else {
-        containerDiv.appendChild(dom.createElement('h4')).textContent = '(No adjustments available)'
+        containerDiv.appendChild(dom.createElement('h4')).textContent =
+          '(No adjustments available)'
       }
     }
 
@@ -808,20 +1029,34 @@ module.exports = {
         iframe.setAttribute('src', target.uri)
         // See https://stackoverflow.com/questions/325273/make-iframe-to-fit-100-of-containers-remaining-height
         // Set the container position (sic) so it becaomes a 100% reference for the size of the iframe height 100%
-        containerDiv.setAttribute('style', 'position: relative; top: 0px; left:0px; right:0px; resize: both; overflow:scroll; min-width: 30em; min-height: 30em;')
+        containerDiv.setAttribute(
+          'style',
+          'position: relative; top: 0px; left:0px; right:0px; resize: both; overflow:scroll; min-width: 30em; min-height: 30em;'
+        )
         // iframe.setAttribute('style', 'height: 350px; border: 0; margin: 0; padding: 0; resize:both; overflow:scroll; width: 100%;')
         // iframe.setAttribute('style', 'border: none; margin: 0; padding: 0; height: 100%; width: 100%; resize: both; overflow:scroll;')
-        iframe.setAttribute('style', 'border: none; margin: 0; padding: 0; height: 100%; width: 100%;')
+        iframe.setAttribute(
+          'style',
+          'border: none; margin: 0; padding: 0; height: 100%; width: 100%;'
+        )
         // Following https://dev.chromium.org/Home/chromium-security/deprecating-permissions-in-cross-origin-iframes :
         iframe.setAttribute('allow', 'getUserMedia') // Allow iframe to request camera and mic
         // containerDiv.style.resize = 'none' // Remove scroll bars on outer div - don't seem to work so well
         containerDiv.style.padding = 0
       }
       var renderPeoplePicker = function () {
-        var context = {div: containerDiv, dom: dom}
-        containerDiv.appendChild(dom.createElement('h4')).textContent = 'Meeting Participants'
+        var context = { div: containerDiv, dom: dom }
+        containerDiv.appendChild(dom.createElement('h4')).textContent =
+          'Meeting Participants'
         var groupPickedCb = function (group) {
-          var toIns = [$rdf.st(meeting, ns.meeting('particpantGroup'), group, meeting.doc())]
+          var toIns = [
+            $rdf.st(
+              meeting,
+              ns.meeting('particpantGroup'),
+              group,
+              meeting.doc()
+            )
+          ]
           kb.updater.update([], toIns, function (uri, ok, message) {
             if (ok) {
               selectedGroup = group
@@ -834,28 +1069,65 @@ module.exports = {
 
         UI.authn.loadTypeIndexes(context).then(function (context) {
           // Assumes that the type index has an entry for addressbook
-          var options = { defaultNewGroupName: 'Meeting Participants', selectedGroup: selectedGroup }
-          var picker = new UI.widgets.PeoplePicker(context.div, context.index.private[0], groupPickedCb, options)
+          var options = {
+            defaultNewGroupName: 'Meeting Participants',
+            selectedGroup: selectedGroup
+          }
+          var picker = new UI.widgets.PeoplePicker(
+            context.div,
+            context.index.private[0],
+            groupPickedCb,
+            options
+          )
           picker.render()
         })
       }
 
       var renderDetails = function () {
-        containerDiv.appendChild(dom.createElement('h3')).textContent = 'Details of meeting'
-        var form = $rdf.sym('https://solid.github.io/solid-panes/meeting/meetingDetailsForm.ttl#main')
-        UI.widgets.appendForm(document, containerDiv, {}, meeting, form, meeting.doc(), complainIfBad)
-        containerDiv.appendChild(tipDiv(
-          'Drag URL-bar icons of web pages into the tab bar on the left to add new meeting materials.'))
+        containerDiv.appendChild(dom.createElement('h3')).textContent =
+          'Details of meeting'
+        var form = $rdf.sym(
+          'https://solid.github.io/solid-panes/meeting/meetingDetailsForm.ttl#main'
+        )
+        UI.widgets.appendForm(
+          document,
+          containerDiv,
+          {},
+          meeting,
+          form,
+          meeting.doc(),
+          complainIfBad
+        )
+        containerDiv.appendChild(
+          tipDiv(
+            'Drag URL-bar icons of web pages into the tab bar on the left to add new meeting materials.'
+          )
+        )
         me = UI.authn.currentUser()
         if (me) {
           kb.add(meeting, ns.dc('author'), me, meetingDoc) // @@ should nly be on initial creation?
         }
-        var context = {noun: 'meeting', me: me, statusArea: containerDiv, div: containerDiv, dom: dom}
-        UI.authn.registrationControl(context, meeting, ns.meeting('Meeting')).then(function (context) {
-          console.log('Registration control finsished.')
-        })
+        var context = {
+          noun: 'meeting',
+          me: me,
+          statusArea: containerDiv,
+          div: containerDiv,
+          dom: dom
+        }
+        UI.authn
+          .registrationControl(context, meeting, ns.meeting('Meeting'))
+          .then(function (context) {
+            console.log('Registration control finsished.')
+          })
         var options = {}
-        UI.pad.manageParticipation(dom, containerDiv, meetingDoc, meeting, me, options)
+        UI.pad.manageParticipation(
+          dom,
+          containerDiv,
+          meetingDoc,
+          meeting,
+          me,
+          options
+        )
 
         // "Make a new meeting" button
         var imageStyle = 'height: 2em; width: 2em; margin:0.5em;'
@@ -878,7 +1150,8 @@ module.exports = {
 
       if (kb.holds(subject, ns.rdf('type'), ns.meeting('Tool'))) {
         var target = kb.any(subject, ns.meeting('target'))
-        if (target.sameTerm(meeting) && !kb.any(subject, ns.meeting('view'))) { // self reference? force details form
+        if (target.sameTerm(meeting) && !kb.any(subject, ns.meeting('view'))) {
+          // self reference? force details form
           renderDetails() // Legacy meeting instances
         } else {
           var view = kb.any(subject, ns.meeting('view'))
@@ -893,21 +1166,28 @@ module.exports = {
             pane = view ? panes.byName(view) : null
             table = containerDiv.appendChild(dom.createElement('table'))
             table.style.width = '100%'
-            panes.getOutliner(dom).GotoSubject(target, true, pane, false, undefined, table)
+            panes
+              .getOutliner(dom)
+              .GotoSubject(target, true, pane, false, undefined, table)
           }
         }
-      } else if (subject.sameTerm(meeting)) { // self reference? force details form
+      } else if (subject.sameTerm(meeting)) {
+        // self reference? force details form
         renderDetails()
-      } else if (subject.sameTerm(subject.doc()) &&
-                 !kb.holds(subject, UI.ns.rdf('type'), UI.ns.meeting('Chat')) &&
-                 !kb.holds(subject, UI.ns.rdf('type'), UI.ns.meeting('PaneView'))) {
+      } else if (
+        subject.sameTerm(subject.doc()) &&
+        !kb.holds(subject, UI.ns.rdf('type'), UI.ns.meeting('Chat')) &&
+        !kb.holds(subject, UI.ns.rdf('type'), UI.ns.meeting('PaneView'))
+      ) {
       } else {
         table = containerDiv.appendChild(dom.createElement('table'))
-        panes.getOutliner(dom).GotoSubject(subject, true, undefined, false, undefined, table)
+        panes
+          .getOutliner(dom)
+          .GotoSubject(subject, true, undefined, false, undefined, table)
       }
     }
 
-    var options = {dom: dom}
+    var options = { dom: dom }
     options.predicate = ns.meeting('toolList')
     options.subject = subject
     options.ordered = true
@@ -915,12 +1195,17 @@ module.exports = {
     options.renderMain = renderMain
     options.renderTab = renderTab
     options.renderTabSettings = renderTabSettings
-    options.backgroundColor = kb.anyValue(subject, ns.ui('backgroundColor')) || '#ddddcc'
+    options.backgroundColor =
+      kb.anyValue(subject, ns.ui('backgroundColor')) || '#ddddcc'
     var tabs = mainTR.appendChild(UI.tabs.tabWidget(options))
 
     UI.aclControl.preventBrowserDropEvents(dom)
 
-    UI.widgets.makeDropTarget(tabs.tabContainer, droppedURIHandler, droppedFileHandler)
+    UI.widgets.makeDropTarget(
+      tabs.tabContainer,
+      droppedURIHandler,
+      droppedFileHandler
+    )
     UI.widgets.makeDropTarget(iconCell, droppedURIHandler, droppedFileHandler)
 
     return div
