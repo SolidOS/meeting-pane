@@ -8,7 +8,6 @@
 const VideoRoomPrefix = 'https://meet.jit.si/'
 
 const UI = require('solid-ui')
-const panes = require('pane-registry')
 const ns = UI.ns
 
 const meetingDetailsFormText = require('./meetingDetailsForm.js')
@@ -20,8 +19,8 @@ module.exports = {
 
   audience: [ns.solid('PowerUser')],
 
-  label: function (subject) {
-    var kb = UI.store
+  label: function (subject, context) {
+    var kb = context.session.store
     var ns = UI.ns
     if (kb.holds(subject, ns.rdf('type'), ns.meeting('Meeting'))) {
       return 'Meeting'
@@ -36,9 +35,9 @@ module.exports = {
 
   mintClass: UI.ns.meeting('Meeting'),
 
-  mintNew: function (options) {
+  mintNew: function (context, options) {
     return new Promise(function (resolve, reject) {
-      var kb = UI.store
+      var kb = context.session.store
       var ns = UI.ns
       options.newInstance =
         options.newInstance || kb.sym(options.newBase + 'index.ttl#this')
@@ -81,8 +80,9 @@ module.exports = {
 
   // Returns a div
 
-  render: function (subject, dom) {
-    var kb = UI.store
+  render: function (subject, dataBrowserContext) {
+    const dom = dataBrowserContext.dom
+    var kb = dataBrowserContext.session.store
     var ns = UI.ns
     var updater = kb.updater
     var thisPane = this
@@ -212,7 +212,7 @@ module.exports = {
           }
           var newPaneOptions = {
             newInstance: subject, // kb.sym(subject.doc().uri + '#LinkListTool'),
-            pane: panes.link, // the pane to be used to mint a new thing
+            pane: dataBrowserContext.session.paneRegistry.byName('link'), // the pane to be used to mint a new thing
             predicate: ns.meeting('attachmentTool'),
             tabTitle: 'Links',
             view: 'link', // The pane to be used when it is viewed
@@ -375,7 +375,7 @@ module.exports = {
 
     var makeGroup = function (toolObject) {
       var newBase = meetingBase + 'Group/'
-      var kb = UI.store
+      var kb = dataBrowserContext.session.store
       var group = kb.any(meeting, ns.meeting('particpants'))
       if (!group) {
         group = $rdf.sym(newBase + 'index.ttl#this')
@@ -425,7 +425,7 @@ module.exports = {
       var newPaneOptions = {
         useExisting: meeting, // Regard the meeting as being the schedulable event itself.
         // newInstance: meeting,
-        pane: panes.schedule,
+        pane: dataBrowserContext.session.paneRegistry.byName('schedule'),
         view: 'schedule',
         // predicate: ns.meeting('schedulingPoll'),
         // newBase: meetingBase + 'Schedule/',   Not needed as uses existing meeting
@@ -443,7 +443,7 @@ module.exports = {
       }
       var newPaneOptions = {
         newInstance: kb.sym(meeting.dir().uri + folderName + '/'),
-        pane: panes.folder, // @@ slideshow??
+        pane: dataBrowserContext.session.paneRegistry.byName('folder'), // @@ slideshow??
         predicate: ns.meeting('pictures'),
         shareTab: true,
         tabTitle: folderName,
@@ -461,7 +461,7 @@ module.exports = {
       }
       var options = {
         newInstance: kb.sym(meeting.dir().uri + 'Files/'),
-        pane: panes.folder,
+        pane: dataBrowserContext.session.paneRegistry.byName('folder'),
         predicate: ns.meeting('materialsFolder'),
         tabTitle: 'Materials',
         noIndexHTML: true
@@ -477,7 +477,7 @@ module.exports = {
       }
       var options = {
         newInstance: kb.sym(meeting.dir().uri + 'Attendees/index.ttl#this'),
-        pane: panes.contact,
+        pane: dataBrowserContext.session.paneRegistry.byName('contact'),
         predicate: ns.meeting('attendeeGroup'),
         tabTitle: 'Attendees',
         instanceClass: ns.vcard('Group'),
@@ -495,7 +495,7 @@ module.exports = {
         newBase: meetingBase + 'SharedNotes/',
         predicate: UI.ns.meeting('sharedNotes'),
         tabTitle: 'Shared Notes',
-        pane: panes.pad
+        pane: dataBrowserContext.session.paneRegistry.byName('pad')
       }
       return makeNewPaneTool(toolObject, newPaneOptions)
     }
@@ -520,7 +520,7 @@ module.exports = {
             newBase: meetingBase + URIsegment + '/', // @@@ sanitize
             predicate: UI.ns.meeting('subMeeting'),
             tabTitle: name,
-            pane: panes.meeting
+            pane: dataBrowserContext.session.paneRegistry.byName('meeting')
           }
           return makeNewPaneTool(toolObject, options)
         })
@@ -537,7 +537,7 @@ module.exports = {
 
     function makeNewPaneTool (toolObject, options) {
       return new Promise(function (resolve, reject) {
-        var kb = UI.store
+        var kb = dataBrowserContext.session.store
         if (!options.useExisting) {
           // useExisting means use existing object in new role
           var existing = kb.any(meeting, options.predicate)
@@ -581,7 +581,7 @@ module.exports = {
           kb.sym(options.newBase + 'index.ttl#this')
 
         options.pane
-          .mintNew(options)
+          .mintNew(dataBrowserContext, options)
           .then(function (options) {
             var tool = makeToolNode(
               options.newInstance,
@@ -615,7 +615,7 @@ module.exports = {
 
     var makeActions = function (toolObject) {
       var newBase = meetingBase + 'Actions/'
-      var kb = UI.store
+      var kb = dataBrowserContext.session.store
       if (kb.holds(meeting, ns.meeting('actions'))) {
         console.log('Ignored - already have actions')
         return // already got one
@@ -654,7 +654,7 @@ module.exports = {
 
     var makeChat = function (toolObject) {
       var newBase = meetingBase + 'Chat/'
-      var kb = UI.store
+      var kb = dataBrowserContext.session.store
       if (kb.holds(meeting, ns.meeting('chat'))) {
         console.log('Ignored - already have chat')
         return // already got one
@@ -673,7 +673,7 @@ module.exports = {
     }
 
     var makeVideoCall = function (toolObject) {
-      var kb = UI.store
+      var kb = dataBrowserContext.session.store
       var newInstance = $rdf.sym(VideoRoomPrefix + UI.utils.genUuid())
 
       if (kb.holds(meeting, ns.meeting('videoCallPage'))) {
@@ -703,7 +703,7 @@ module.exports = {
           if (!uri) {
             return resetTools()
           }
-          var kb = UI.store
+          var kb = dataBrowserContext.session.store
           var ns = UI.ns
           var target = kb.sym(uri)
           var tool = makeToolNode(
@@ -721,7 +721,7 @@ module.exports = {
     }
 
     var makeSharing = function (toolObject) {
-      var kb = UI.store
+      var kb = dataBrowserContext.session.store
       var ns = UI.ns
       var target = meeting.dir()
       if (
@@ -747,7 +747,7 @@ module.exports = {
       var appDetails = { noun: 'meeting' }
       var gotWS = function (ws, base) {
         thisPane
-          .mintNew({ newBase: base })
+          .mintNew(dataBrowserContext, { newBase: base })
           .then(function (options) {
             var newInstance = options.newInstance
             parameterCell.removeChild(mintUI)
@@ -1163,10 +1163,12 @@ module.exports = {
           } else if (view === 'iframe') {
             showIframe(target)
           } else {
-            pane = view ? panes.byName(view) : null
+            pane = view
+              ? dataBrowserContext.session.paneRegistry.byName(view)
+              : null
             table = containerDiv.appendChild(dom.createElement('table'))
             table.style.width = '100%'
-            panes
+            dataBrowserContext
               .getOutliner(dom)
               .GotoSubject(target, true, pane, false, undefined, table)
           }
@@ -1181,7 +1183,7 @@ module.exports = {
       ) {
       } else {
         table = containerDiv.appendChild(dom.createElement('table'))
-        panes
+        dataBrowserContext
           .getOutliner(dom)
           .GotoSubject(subject, true, undefined, false, undefined, table)
       }
