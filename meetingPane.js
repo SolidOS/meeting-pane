@@ -189,7 +189,7 @@ module.exports = {
 
     var handleDroppedThing = function (target) {
       // @@ idea: look
-      return new Promise(function (resolve, reject) {
+      return new Promise(function (resolve) {
         // Add a meeting tab for a web resource.  Alas many resource canot be framed
         // as they block framing, or are insecure.
         var addIframeTool = function (target) {
@@ -238,7 +238,7 @@ module.exports = {
             }
             kb.fetcher.nowOrWhenFetched(group.doc(), undefined, function (
               ok,
-              body
+              _body
             ) {
               if (!ok) {
                 complain("Can't read group to add person" + group)
@@ -262,7 +262,7 @@ module.exports = {
               addPersonToGroup(obj, group)
               kb.fetcher
                 .putBack(meetingDoc, { contentType: 'text/turtle' })
-                .then(function (xhr) {
+                .then(function (_xhr) {
                   console.log('Particiants Group created: ' + group)
                 })
             })
@@ -350,7 +350,7 @@ module.exports = {
           var target = $rdf.sym(u) // Attachment needs text label to disinguish I think not icon.
           return handleDroppedThing(target) // can add to meetingDoc but must be sync
         })
-      ).then(function (a) {
+      ).then(function (_a) {
         saveBackMeetingDoc()
       })
     }
@@ -361,7 +361,7 @@ module.exports = {
         files,
         meeting.dir().uri + 'Files',
         meeting.dir().uri + 'Pictures',
-        function (theFile, destURI) {
+        function (theFile, _destURI) {
           if (theFile.type.startsWith('image/')) {
             makePicturesFolder('Files') // If necessary
           } else {
@@ -373,7 +373,7 @@ module.exports = {
 
     // //////////////////////////////////////////////////////  end of drag drop
 
-    var makeGroup = function (toolObject) {
+    var makeGroup = function (_toolObject) {
       var newBase = meetingBase + 'Group/'
       var kb = dataBrowserContext.session.store
       var group = kb.any(meeting, ns.meeting('particpants'))
@@ -453,7 +453,7 @@ module.exports = {
       return makeNewPaneTool(toolObject, newPaneOptions)
     }
 
-    var makeMaterialsFolder = function (folderName) {
+    var makeMaterialsFolder = function (_folderName) {
       var toolObject = {
         icon: 'noun_681601.svg', // Document
         limit: 1,
@@ -572,8 +572,7 @@ module.exports = {
             }
           }
         }
-        if (!me && !options.me)
-          reject(new Error('Username not defined for new tool'))
+        if (!me && !options.me) { reject(new Error('Username not defined for new tool')) }
         options.me = options.me || me
         options.newInstance =
           options.useExisting ||
@@ -595,7 +594,7 @@ module.exports = {
             saveBackMeetingDoc()
             kb.fetcher
               .putBack(meetingDoc, { contentType: 'text/turtle' })
-              .then(function (xhr) {
+              .then(function (_xhr) {
                 resolve(options)
               })
               .catch(function (err) {
@@ -609,11 +608,11 @@ module.exports = {
       })
     }
 
-    var makeAgenda = function (toolObject) {
+    var makeAgenda = function (_toolObject) {
       // selectTool(icon)
     }
 
-    var makeActions = function (toolObject) {
+    var makeActions = function (_toolObject) {
       var newBase = meetingBase + 'Actions/'
       var kb = dataBrowserContext.session.store
       if (kb.holds(meeting, ns.meeting('actions'))) {
@@ -652,7 +651,7 @@ module.exports = {
       )
     }
 
-    var makeChat = function (toolObject) {
+    var makeChat = function (_toolObject) {
       var newBase = meetingBase + 'Chat/'
       var kb = dataBrowserContext.session.store
       if (kb.holds(meeting, ns.meeting('chat'))) {
@@ -672,7 +671,7 @@ module.exports = {
       saveAppDocumentLinkAndAddNewThing(tool, messageStore, ns.meeting('chat'))
     }
 
-    var makeVideoCall = function (toolObject) {
+    var makeVideoCall = function (_toolObject) {
       var kb = dataBrowserContext.session.store
       var newInstance = $rdf.sym(VideoRoomPrefix + UI.utils.genUuid())
 
@@ -696,7 +695,7 @@ module.exports = {
       saveBackMeetingDoc()
     }
 
-    var makeAttachment = function (toolObject) {
+    var makeAttachment = function (_toolObject) {
       UI.widgets
         .askName(dom, kb, parameterCell, ns.log('uri'), UI.ns.rdf('Resource'))
         .then(function (uri) {
@@ -851,7 +850,7 @@ module.exports = {
     star.setAttribute('style', iconStyle + 'opacity: 50%;')
     star.setAttribute('title', 'Add another tool to the meeting')
 
-    var selectNewTool = function (event) {
+    var selectNewTool = function (_event) {
       visible = !visible
       star.setAttribute(
         'style',
@@ -896,7 +895,7 @@ module.exports = {
         icon.tool = toolObject
         var maker = toolObject.maker
         if (!toolObject.disabled) {
-          icon.addEventListener('click', function (e) {
+          icon.addEventListener('click', function (_event) {
             selectTool(icon)
             maker(toolObject)
           })
@@ -1116,7 +1115,7 @@ module.exports = {
         }
         UI.authn
           .registrationControl(context, meeting, ns.meeting('Meeting'))
-          .then(function (context) {
+          .then(function (_context) {
             console.log('Registration control finsished.')
           })
         var options = {}
