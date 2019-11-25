@@ -1066,7 +1066,7 @@ module.exports = {
         }
         selectedGroup = kb.any(meeting, ns.meeting('particpantGroup'))
 
-        UI.authn.loadTypeIndexes(context).then(function (context) {
+        UI.authn.loadTypeIndexes(context).then(function () {
           // Assumes that the type index has an entry for addressbook
           var options = {
             defaultNewGroupName: 'Meeting Participants',
