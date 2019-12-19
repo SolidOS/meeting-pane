@@ -2,13 +2,13 @@
  **
  **  Putting together some of the tools we have to manage a Meeting
  */
-/* global $rdf */
 
 // const VideoRoomPrefix = 'https://appear.in/'
 const VideoRoomPrefix = 'https://meet.jit.si/'
 
 const UI = require('solid-ui')
 const ns = UI.ns
+const $rdf = require('rdflib')
 
 const meetingDetailsFormText = require('./meetingDetailsForm.js')
 
