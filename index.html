@@ -1,13 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8" />
+    <meta charset="utf-8" />
     <title>The Meetulator - a handy gadget for meetings</title>
-    <link
-      type="text/css"
-      rel="stylesheet"
-      href="https://linkeddata.github.io/solid-app-set/style/tabbedtab.css"
-    />
     <style>
       body {
         margin: 10%;
@@ -21,14 +16,27 @@
     </style>
     <script
       type="text/javascript"
-      src="https://timbl.com/timbl/Automation/Library/Mashup/mashlib-prealpha.js"
+      src="http://solid.github.io/mashlib/dist/mashlib.js"
     ></script>
-    <script type="text/javascript" src="create.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // panes.runDataBrowser()
+        // Set up the view for the current subject
+        const uri = decodeURIComponent(window.location.hash.substr(1))
+        if (uri.length === 0) {
+          window.location = '?#' + encodeURIComponent('https://michielbdejong.inrupt.net/meetings/Data%20browser%2016%20Dec%202019/')
+        }
+        console.log(uri)
+        const subject = $rdf.sym(uri)
+        const outliner = panes.getOutliner(document)
+        outliner.GotoSubject(subject, true, undefined, true, undefined)
+      })
+    </script>
   </head>
   <body>
     <h1>The Meetulator</h1>
     <p>
-      A handy gadget for keeping all the parts of a meetingin one place where
+      A handy gadget for keeping all the parts of a meeting in one place where
       you -- and others at the meeting can find them
     </p>
 
