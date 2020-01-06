@@ -2,7 +2,7 @@
   "name": "meeting-pane",
   "version": "2.0.1",
   "description": "Solid-compatible Panes: meeting collaborative tool",
-  "main": "./meetingPane.js",
+  "main": "./dist/meetingPane.js",
   "scripts": {
     "lint": "eslint '*.js'",
     "lint-fix": "eslint '*.js' --fix",
