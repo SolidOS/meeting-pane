@@ -1028,10 +1028,12 @@ module.exports = {
         iframe.setAttribute('src', target.uri)
         // See https://stackoverflow.com/questions/325273/make-iframe-to-fit-100-of-containers-remaining-height
         // Set the container position (sic) so it becaomes a 100% reference for the size of the iframe height 100%
+        /*  For now at least , leave the container style as set by the tab system. 20200115b
         containerDiv.setAttribute(
           'style',
           'position: relative; top: 0px; left:0px; right:0px; resize: both; overflow:scroll; min-width: 30em; min-height: 30em;'
         )
+        */
         // iframe.setAttribute('style', 'height: 350px; border: 0; margin: 0; padding: 0; resize:both; overflow:scroll; width: 100%;')
         // iframe.setAttribute('style', 'border: none; margin: 0; padding: 0; height: 100%; width: 100%; resize: both; overflow:scroll;')
         iframe.setAttribute(
