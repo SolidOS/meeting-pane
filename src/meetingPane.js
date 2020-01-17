@@ -104,6 +104,7 @@ module.exports = {
     var meetingBase = subject.dir().uri
     var div = dom.createElement('div')
     var table = div.appendChild(dom.createElement('table'))
+    table.style = 'width: 100%; height: 100%; margin:0;'
     var topTR = table.appendChild(dom.createElement('tr'))
     topTR.appendChild(dom.createElement('div')) // topDiv
     var mainTR = table.appendChild(dom.createElement('tr'))
