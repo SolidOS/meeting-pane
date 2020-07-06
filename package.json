@@ -46,7 +46,7 @@
   },
   "homepage": "https://github.com/solid/meeting-pane/",
   "dependencies": {
-    "solid-ui": "^2.0.6"
+    "solid-ui": "^2.1.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.10.3",
