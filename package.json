@@ -1,6 +1,6 @@
 {
   "name": "meeting-pane",
-  "version": "2.2.0",
+  "version": "2.1.1",
   "description": "Solid-compatible Panes: meeting collaborative tool",
   "main": "./lib/meetingPane.js",
   "files": [
@@ -46,7 +46,7 @@
   },
   "homepage": "https://github.com/solid/meeting-pane/",
   "dependencies": {
-    "solid-ui": "^2.1.1"
+    "solid-ui": "^2.2.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.10.5",
@@ -57,7 +57,7 @@
     "husky": "^4.2.5",
     "lint-staged": "^10.2.11",
     "standard": "^14.3.4",
-    "webpack": "^4.44.0",
+    "webpack": "^4.44.1",
     "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.11.0"
   },
