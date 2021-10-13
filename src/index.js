@@ -1,7 +1,7 @@
 const MeetingPane = require('./meetingPane.js')
 const $rdf = require('rdflib')
 const UI = require('solid-ui')
-const SolidAuth = require('solid-auth-client')
+// const SolidAuth = require('solid-auth-client')
 
 async function appendMeetingPane (dom, uri) {
   const subject = $rdf.sym(uri)
@@ -26,32 +26,29 @@ document.addEventListener('DOMContentLoaded', function () {
   // Set up the view for the subject indicated in the fragment of the window's URL
   const uri = decodeURIComponent(window.location.hash.substr(1))
   if (uri.length === 0) {
-    window.location = '?#' + encodeURIComponent('https://michielbdejong.inrupt.net/meetings/Data%20browser%2016%20Dec%202019/index.ttl#this')
+    // window.location = '?#' + encodeURIComponent('https://michielbdejong.inrupt.net/meetings/Data%20browser%2016%20Dec%202019/index.ttl#this')
+    window.location = '?#' + encodeURIComponent('https://timbl.com/timbl/Public/Test/Meeting/Brainstorming/index.ttl#this')
   }
   appendMeetingPane(document, uri)
 })
 
-window.onload = () => {
-  console.log('document ready')
-  SolidAuth.trackSession(session => {
-    if (!session) {
-      console.log('The user is not logged in')
-      document.getElementById('loginBanner').innerHTML = '<button onclick="popupLogin()">Log in</button>'
-    } else {
-      console.log(`Logged in as ${session.webId}`)
+// window.onload = () => {
+console.log('document ready')
+const loginBanner = document.getElementById('loginBanner')
+loginBanner.appendChild(UI.authn.loginStatusBox(document, null, {}))
 
-      document.getElementById('loginBanner').innerHTML = `Logged in as ${session.webId} <button onclick="logout()">Log out</button>`
-    }
-  })
-}
-window.logout = () => {
-  SolidAuth.logout()
-  window.location = ''
-}
-window.popupLogin = async function () {
-  let session = await SolidAuth.currentSession()
-  const popupUri = 'https://solid.community/common/popup.html'
-  if (!session) {
-    session = await SolidAuth.popupLogin({ popupUri })
+async function finishLogin () {
+  await UI.authn.authSession.handleIncomingRedirect()
+  const session = UI.authn.authSession
+  if (session.info.isLoggedIn) {
+    console.log(`Logged in as ${session.webId}`)
+
+    document.getElementById('loginBanner').innerHTML = `Logged in as ${UI.authn.currentUser().uri}`
+  } else {
+    console.log('The user is not logged in')
+    // document.getElementById('loginBanner').innerHTML = '<button onclick="popupLogin()">Log in</button>'
   }
 }
+
+finishLogin()
+// }

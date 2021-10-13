@@ -1,6 +1,6 @@
 {
   "name": "meeting-pane",
-  "version": "2.3.5",
+  "version": "2.3.6-beta.0",
   "description": "Solid-compatible Panes: meeting collaborative tool",
   "main": "./lib/meetingPane.js",
   "files": [
@@ -49,7 +49,7 @@
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.0",
     "path-browserify": "^1.0.1",
-    "solid-ui": "^2.4.5"
+    "solid-ui": "^2.4.9-beta"
   },
   "devDependencies": {
     "@babel/cli": "^7.14.5",
