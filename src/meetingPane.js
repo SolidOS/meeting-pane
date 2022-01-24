@@ -4,6 +4,7 @@
  */
 
 // const VideoRoomPrefix = 'https://appear.in/'
+import { typeIndexLogic, authn } from 'solid-logic'
 const VideoRoomPrefix = 'https://meet.jit.si/'
 
 const UI = require('solid-ui')
@@ -44,7 +45,7 @@ module.exports = {
       var meeting = options.newInstance
       var meetingDoc = meeting.doc()
 
-      var me = UI.authn.currentUser()
+      var me = authn.currentUser()
 
       if (me) {
         kb.add(meeting, ns.dc('author'), me, meetingDoc)
@@ -395,7 +396,7 @@ module.exports = {
     /*
     var makeAddressBook = function (toolObject) {
       var newBase = meetingBase + 'Group/'
-      var kb = UI.store
+      var kb = store
       var group = kb.any(meeting, ns.meeting('addressBook'))
       if (!group) {
         group = $rdf.sym(newBase + 'index.ttl#this')
@@ -405,7 +406,7 @@ module.exports = {
       var div = dom.createElement('div')
       var context = { dom: dom, div: div }
       var book
-      UI.authn.findAppInstances(context, ns.vcard('AddressBook')).then(
+      UI.login.findAppInstances(context, ns.vcard('AddressBook')).then(
         function (context) {
           if (context.instances.length === 0) {
             complain('You have no solid address book. It is really handy to have one to keep track of people and groups')
@@ -766,7 +767,7 @@ module.exports = {
             parameterCell.appendChild(UI.widgets.errorMessageBlock(dom, err))
           })
       }
-      var mintUI = UI.authn.selectWorkspace(dom, appDetails, gotWS)
+      var mintUI = UI.login.selectWorkspace(dom, appDetails, gotWS)
       parameterCell.appendChild(mintUI)
     }
 
@@ -861,7 +862,7 @@ module.exports = {
     }
 
     var loginOutButton
-    UI.authn.checkUser().then(webId => {
+    authn.checkUser().then(webId => {
       if (webId) {
         me = webId
         star.addEventListener('click', selectNewTool)
@@ -869,7 +870,7 @@ module.exports = {
         return
       }
 
-      loginOutButton = UI.authn.loginStatusBox(dom, webIdUri => {
+      loginOutButton = UI.login.loginStatusBox(dom, webIdUri => {
         if (webIdUri) {
           me = kb.sym(webIdUri)
           parameterCell.removeChild(loginOutButton)
@@ -1070,7 +1071,7 @@ module.exports = {
         }
         selectedGroup = kb.any(meeting, ns.meeting('particpantGroup'))
 
-        UI.authn.loadTypeIndexes(context).then(function () {
+        typeIndexLogic.loadTypeIndexes(context).then(function () {
           // Assumes that the type index has an entry for addressbook
           var options = {
             defaultNewGroupName: 'Meeting Participants',
@@ -1106,7 +1107,7 @@ module.exports = {
             'Drag URL-bar icons of web pages into the tab bar on the left to add new meeting materials.'
           )
         )
-        me = UI.authn.currentUser()
+        me = authn.currentUser()
         if (me) {
           kb.add(meeting, ns.dc('author'), me, meetingDoc) // @@ should nly be on initial creation?
         }
