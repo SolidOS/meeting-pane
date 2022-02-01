@@ -1118,7 +1118,7 @@ module.exports = {
           div: containerDiv,
           dom: dom
         }
-        UI.authn
+        UI.login
           .registrationControl(context, meeting, ns.meeting('Meeting'))
           .then(function (_context) {
             console.log('Registration control finsished.')
