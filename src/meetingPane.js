@@ -4,7 +4,7 @@
  */
 
 // const VideoRoomPrefix = 'https://appear.in/'
-import { typeIndexLogic, authn } from 'solid-logic'
+import { loadTypeIndexes, authn } from 'solid-logic'
 const VideoRoomPrefix = 'https://meet.jit.si/'
 
 const UI = require('solid-ui')
@@ -1071,7 +1071,7 @@ module.exports = {
         }
         selectedGroup = kb.any(meeting, ns.meeting('particpantGroup'))
 
-        typeIndexLogic.loadTypeIndexes(context).then(function () {
+        loadTypeIndexes(context).then(function () {
           // Assumes that the type index has an entry for addressbook
           var options = {
             defaultNewGroupName: 'Meeting Participants',

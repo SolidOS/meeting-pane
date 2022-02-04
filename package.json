@@ -8,7 +8,7 @@
     "lib"
   ],
   "scripts": {
-    "build": "webpack",
+    "build": "webpack && build-lib",
     "build-browserified": "npm run build",
     "build-dist": "webpack --progress --colors --mode=production",
     "build-dev": "webpack --progress --colors --mode=development",
@@ -17,6 +17,7 @@
     "build-version": "./timestamp.sh > src/versionInfo.ts  && eslint 'src/versionInfo.ts' --fix",
     "lint": "eslint '*.js'",
     "lint-fix": "eslint '*.js' --fix",
+    "clean": "rm -rf lib",
     "test": "npm run lint",
     "prepublishOnly": "npm test && npm run build-lib",
     "postpublish": "git push origin main --follow-tags",
@@ -49,9 +50,9 @@
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.0",
     "path-browserify": "^1.0.1",
-    "solid-logic": "^1.3.13-2e3e7417",
-    "solid-ui": "file:../solid-ui",
-    "rdflib": "^2.2.17"
+    "rdflib": "^2.2.17",
+    "solid-logic": "1.3.13-60e05a84",
+    "solid-ui": "file:../solid-ui"
   },
   "devDependencies": {
     "@babel/cli": "^7.16.0",
