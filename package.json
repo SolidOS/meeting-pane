@@ -8,7 +8,7 @@
     "lib"
   ],
   "scripts": {
-    "build": "webpack && build-lib",
+    "build": "npm run build-lib && webpack",
     "build-browserified": "npm run build",
     "build-dist": "webpack --progress --colors --mode=production",
     "build-dev": "webpack --progress --colors --mode=development",
