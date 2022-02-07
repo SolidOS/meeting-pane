@@ -17,7 +17,7 @@
     "build-version": "./timestamp.sh > src/versionInfo.ts  && eslint 'src/versionInfo.ts' --fix",
     "lint": "eslint '*.js'",
     "lint-fix": "eslint '*.js' --fix",
-    "clean": "rm -rf lib",
+    "clean": "rm -rf lib && rm -rf dist",
     "test": "npm run lint",
     "prepublishOnly": "npm test && npm run build-lib",
     "postpublish": "git push origin main --follow-tags",
