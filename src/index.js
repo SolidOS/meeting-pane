@@ -1,3 +1,4 @@
+import { store, authSession, authn } from 'solid-logic'
 const MeetingPane = require('./meetingPane.js')
 const $rdf = require('rdflib')
 const UI = require('solid-ui')
@@ -8,12 +9,12 @@ async function appendMeetingPane (dom, uri) {
   const doc = subject.doc()
 
   await new Promise((resolve, reject) => {
-    UI.store.fetcher.load(doc).then(resolve, reject)
+    store.fetcher.load(doc).then(resolve, reject)
   })
   const context = { // see https://github.com/solid/solid-panes/blob/005f90295d83e499fd626bd84aeb3df10135d5c1/src/index.ts#L30-L34
     dom,
     session: {
-      store: UI.store
+      store: store
     }
   }
   const options = {}
@@ -35,15 +36,15 @@ document.addEventListener('DOMContentLoaded', function () {
 // window.onload = () => {
 console.log('document ready')
 const loginBanner = document.getElementById('loginBanner')
-loginBanner.appendChild(UI.authn.loginStatusBox(document, null, {}))
+loginBanner.appendChild(UI.login.loginStatusBox(document, null, {}))
 
 async function finishLogin () {
-  await UI.authn.authSession.handleIncomingRedirect()
-  const session = UI.authn.authSession
+  await authSession.handleIncomingRedirect()
+  const session = authSession
   if (session.info.isLoggedIn) {
     console.log(`Logged in as ${session.webId}`)
 
-    document.getElementById('loginBanner').innerHTML = `Logged in as ${UI.authn.currentUser().uri}`
+    document.getElementById('loginBanner').innerHTML = `Logged in as ${authn.currentUser().uri}`
   } else {
     console.log('The user is not logged in')
     // document.getElementById('loginBanner').innerHTML = '<button onclick="popupLogin()">Log in</button>'
