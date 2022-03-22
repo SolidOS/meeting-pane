@@ -4,7 +4,7 @@
  */
 
 // const VideoRoomPrefix = 'https://appear.in/'
-import { loadTypeIndexes, authn } from 'solid-logic'
+const logic = require('solid-logic')
 const VideoRoomPrefix = 'https://meet.jit.si/'
 
 const UI = require('solid-ui')
@@ -45,7 +45,7 @@ module.exports = {
       var meeting = options.newInstance
       var meetingDoc = meeting.doc()
 
-      var me = authn.currentUser()
+      var me = logic.authn.currentUser()
 
       if (me) {
         kb.add(meeting, ns.dc('author'), me, meetingDoc)
@@ -862,7 +862,7 @@ module.exports = {
     }
 
     var loginOutButton
-    authn.checkUser().then(webId => {
+    logic.authn.checkUser().then(webId => {
       if (webId) {
         me = webId
         star.addEventListener('click', selectNewTool)
@@ -1014,7 +1014,7 @@ module.exports = {
       }
     }
 
-    var renderMain = function (containerDiv, subject) {
+    const renderMain = function (containerDiv, subject) {
       var pane = null
       var table
       var selectedGroup = null
@@ -1071,7 +1071,7 @@ module.exports = {
         }
         selectedGroup = kb.any(meeting, ns.meeting('particpantGroup'))
 
-        loadTypeIndexes(context).then(function () {
+        logic.loadTypeIndexes(context).then(function () {
           // Assumes that the type index has an entry for addressbook
           var options = {
             defaultNewGroupName: 'Meeting Participants',
@@ -1107,7 +1107,7 @@ module.exports = {
             'Drag URL-bar icons of web pages into the tab bar on the left to add new meeting materials.'
           )
         )
-        me = authn.currentUser()
+        me = logic.authn.currentUser()
         if (me) {
           kb.add(meeting, ns.dc('author'), me, meetingDoc) // @@ should nly be on initial creation?
         }
@@ -1184,8 +1184,8 @@ module.exports = {
         subject.sameTerm(subject.doc()) &&
         !kb.holds(subject, UI.ns.rdf('type'), UI.ns.meeting('Chat')) &&
         !kb.holds(subject, UI.ns.rdf('type'), UI.ns.meeting('PaneView'))
-      ) {
-      } else {
+      // eslint-disable-next-line no-empty
+      ) { } else {
         table = containerDiv.appendChild(dom.createElement('table'))
         dataBrowserContext
           .getOutliner(dom)

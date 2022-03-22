@@ -4,13 +4,13 @@ const path = require('path')
 
 module.exports = [{
   mode: 'development',
-  entry: './src/index.js',
+  entry: './dev/index.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'meeting.bundle.js'
   },
   plugins: [
-    new HtmlWebpackPlugin({ template: './src/index.html' })
+    new HtmlWebpackPlugin({ template: './dev/index.html' })
   ],
   externals: {
     fs: 'null',
@@ -22,7 +22,7 @@ module.exports = [{
     '@trust/webcrypto': 'crypto'
   },
   devServer: {
-    contentBase: './dist'
+    static: './dist'
   },
   devtool: 'source-map'
 },
