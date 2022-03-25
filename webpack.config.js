@@ -1,14 +1,9 @@
 
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const path = require('path')
 
 module.exports = [{
   mode: 'development',
   entry: './dev/index.js',
-  output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: 'meeting.bundle.js'
-  },
   plugins: [
     new HtmlWebpackPlugin({ template: './dev/index.html' })
   ],
@@ -24,13 +19,15 @@ module.exports = [{
   devServer: {
     static: './dist'
   },
-  devtool: 'source-map'
+  devtool: 'source-map',
+  resolve: {
+    fallback: { "path": false }
+  }
 },
 {
   mode: 'development',
   entry: './src/meetingPane.js',
   output: {
-    path: path.resolve(__dirname, 'dist'),
     filename: 'meetingPane.js'
   },
   externals: {
@@ -42,5 +39,8 @@ module.exports = [{
     'whatwg-url': 'window',
     '@trust/webcrypto': 'crypto'
   },
-  devtool: 'source-map'
+  devtool: 'source-map',
+  resolve: {
+    fallback: { "path": false }
+  }
 }]
