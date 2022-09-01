@@ -19,7 +19,7 @@
     "lint-fix": "eslint '*.js' --fix",
     "clean": "rm -rf lib && rm -rf dist",
     "test": "npm run lint",
-    "prepublishOnly": "npm test && npm run build-lib",
+    "prepublishOnly": "npm test && npm run build",
     "postpublish": "git push origin main --follow-tags",
     "watch": "webpack --watch",
     "start": "webpack serve --open"
