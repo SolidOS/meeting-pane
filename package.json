@@ -47,8 +47,6 @@
   },
   "homepage": "https://github.com/solidos/meeting-pane/",
   "dependencies": {
-    "rdflib": "^2.2.21",
-    "solid-logic": "2.0.1",
     "solid-ui": "2.4.24"
   },
   "devDependencies": {
