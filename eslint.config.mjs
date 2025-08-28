@@ -1,6 +1,7 @@
+import { defineConfig } from "eslint/config";
 import globals from "globals";
 
-export default [{
+export default defineConfig([{
     languageOptions: {
         globals: {
             ...globals.browser,
@@ -16,4 +17,4 @@ export default [{
             varsIgnorePattern: "^_",
         }],
     },
-}];
+}]);
