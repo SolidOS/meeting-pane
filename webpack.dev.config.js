@@ -1,21 +1,12 @@
-import path from 'path'
+import HtmlWebpackPlugin from 'html-webpack-plugin'
 import NodePolyfillPlugin from 'node-polyfill-webpack-plugin'
 
 export default [
   {
-    mode: 'production',
-    entry: './src/meetingPane.js',
-    output: {
-      path: path.resolve(process.cwd(), 'dist'),
-      filename: 'meetingPane.js',
-      library: {
-        name: 'MeetingPane',
-        type: 'umd'
-      },
-      globalObject: 'this',
-      clean: false
-    },
+    mode: 'development',
+    entry: './dev/index.js',
     plugins: [
+      new HtmlWebpackPlugin({ template: './dev/index.html' }),
       new NodePolyfillPlugin()
     ],
     module: {
@@ -36,7 +27,6 @@ export default [
     resolve: {
       extensions: ['*', '.js']
     },
-
     devServer: {
       static: './dist'
     },

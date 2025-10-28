@@ -1,7 +1,7 @@
-const logic = require('solid-logic')
-const MeetingPane = require('../src/meetingPane.js')
-const $rdf = require('rdflib')
-const UI = require('solid-ui')
+import * as logic from 'solid-logic'
+import MeetingPane from '../src/meetingPane'
+import * as $rdf from 'rdflib'
+import * as UI from 'solid-ui'
 
 async function appendMeetingPane (dom, uri) {
   const subject = $rdf.sym(uri)
@@ -23,7 +23,8 @@ async function appendMeetingPane (dom, uri) {
   dom.body.appendChild(paneDiv)
 }
 
-const webIdToShow = 'https://timbl.com/timbl/Public/Test/Meeting/Brainstorming/index.ttl#this'
+//const webIdToShow = 'https://timbl.com/timbl/Public/Test/Meeting/Brainstorming/index.ttl#this'
+const webIdToShow = 'https://timea.solidcommunity.net/TestMeeting/index.ttl#this'
 
 logic.store.fetcher.load(webIdToShow).then(() => {
   appendMeetingPane(document, webIdToShow)
