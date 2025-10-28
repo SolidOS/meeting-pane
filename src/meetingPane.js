@@ -2,16 +2,13 @@
  **
  **  Putting together some of the tools we have to manage a Meeting
  */
+import * as logic from 'solid-logic'
+import UI from 'solid-ui'
+import $rdf from 'rdflib'
+import meetingDetailsFormText from './meetingDetailsForm'
 
-// const VideoRoomPrefix = 'https://appear.in/'
-const logic = require('solid-logic')
 const VideoRoomPrefix = 'https://meet.jit.si/'
-
-const UI = require('solid-ui')
 const ns = UI.ns
-const $rdf = require('rdflib')
-
-const meetingDetailsFormText = require('./meetingDetailsForm.js')
 
 module.exports = {
   icon: UI.icons.iconBase + 'noun_66617.svg',

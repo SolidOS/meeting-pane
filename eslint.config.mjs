@@ -1,20 +1,36 @@
-import { defineConfig } from "eslint/config";
-import globals from "globals";
+import globals from 'globals'
+import neostandard from 'neostandard'
 
-export default defineConfig([{
+export default [
+  ...neostandard(),
+  {
+    ignores: [
+      '**/*.html',
+      '**/*.md',
+      '**/*.json',
+      'node_modules/**',
+      'coverage/**',
+      'dist/**',
+      'shapes/**'
+    ],
+  },
+  {
+    files: ['src/**/*.js', 'src/**/*.cjs', 'src/**/*.mjs'],
+
     languageOptions: {
-        globals: {
-            ...globals.browser,
-            ...globals.node,
-            Atomics: "readonly",
-            SharedArrayBuffer: "readonly",
-        },
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+        Atomics: 'readonly',
+        SharedArrayBuffer: 'readonly',
+      }
     },
-
     rules: {
-        "no-unused-vars": ["warn", {
-            argsIgnorePattern: "^_",
-            varsIgnorePattern: "^_",
-        }],
+      semi: ['error', 'never'],
+      quotes: ['error', 'single'],
+      'no-console': 'warn',
+      'no-unused-vars': 'error',
+      'no-undef': 'error'
     },
-}]);
+  }
+]
