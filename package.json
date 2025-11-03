@@ -14,7 +14,7 @@
     "build-dist": "webpack --progress",
     "lint": "eslint",
     "lint-fix": "eslint --fix",
-    "test": "Echo \"No tests specified\" && exit 0",
+    "test": "echo \"No tests specified\" && exit 0",
     "prepublishOnly": "npm run build && npm run lint",
     "preversion": "npm run lint",
     "postversion": "git push origin main --follow-tags",
