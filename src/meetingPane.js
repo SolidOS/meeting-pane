@@ -2,10 +2,13 @@
  **
  **  Putting together some of the tools we have to manage a Meeting
  */
-import * as logic from 'solid-logic'
 import * as UI from 'solid-ui'
 import * as $rdf from 'rdflib'
 import meetingDetailsFormText from './meetingDetailsForm'
+import { solidLogicSingleton, authn } from 'solid-logic'
+
+const { typeIndex } = solidLogicSingleton
+const { loadTypeIndexesFor } = typeIndex
 
 const VideoRoomPrefix = 'https://meet.jit.si/'
 const ns = UI.ns
@@ -42,7 +45,7 @@ export default {
       const meeting = options.newInstance
       const meetingDoc = meeting.doc()
 
-      const me = logic.authn.currentUser()
+      const me = authn.currentUser()
 
       if (me) {
         kb.add(meeting, ns.dc('author'), me, meetingDoc)
@@ -859,7 +862,7 @@ export default {
     }
 
     let loginOutButton
-    logic.authn.checkUser().then(webId => {
+    authn.checkUser().then(webId => {
       if (webId) {
         me = webId
         star.addEventListener('click', selectNewTool)
@@ -1045,6 +1048,7 @@ export default {
         iframe.setAttribute('name', 'disable-x-frame-options') // For electron: see https://github.com/electron/electron/pull/573
         containerDiv.style.padding = 0
       }
+
       const renderPeoplePicker = function () {
         const context = { div: containerDiv, dom }
         containerDiv.appendChild(dom.createElement('h4')).textContent =
@@ -1068,19 +1072,23 @@ export default {
         }
         selectedGroup = kb.any(meeting, ns.meeting('particpantGroup'))
 
-        logic.createTypeIndexLogic.loadTypeIndexesFor(context).then(function () {
-          // Assumes that the type index has an entry for addressbook
-          const options = {
-            defaultNewGroupName: 'Meeting Participants',
-            selectedGroup
-          }
-          const picker = new UI.widgets.PeoplePicker(
-            context.div,
-            context.index.private[0],
-            groupPickedCb,
-            options
-          )
-          picker.render()
+        authn.checkUser().then(webId => {
+          if (webId) {
+                loadTypeIndexesFor(kb.sym(webId)).then(function () {
+                  // Assumes that the type index has an entry for addressbook
+                  const options = {
+                    defaultNewGroupName: 'Meeting Participants',
+                    selectedGroup
+                  }
+                  const picker = new UI.widgets.PeoplePicker(
+                    context.div,
+                    context.index.private[0],
+                    groupPickedCb,
+                    options
+                  )
+                  picker.render()
+                })
+              }
         })
       }
 
@@ -1104,7 +1112,7 @@ export default {
             'Drag URL-bar icons of web pages into the tab bar on the left to add new meeting materials.'
           )
         )
-        me = logic.authn.currentUser()
+        me = authn.currentUser()
         if (me) {
           kb.add(meeting, ns.dc('author'), me, meetingDoc) // @@ should nly be on initial creation?
         }
