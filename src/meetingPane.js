@@ -1074,21 +1074,21 @@ export default {
 
         authn.checkUser().then(webId => {
           if (webId) {
-                loadTypeIndexesFor(kb.sym(webId)).then(function () {
-                  // Assumes that the type index has an entry for addressbook
-                  const options = {
-                    defaultNewGroupName: 'Meeting Participants',
-                    selectedGroup
-                  }
-                  const picker = new UI.widgets.PeoplePicker(
-                    context.div,
-                    context.index.private[0],
-                    groupPickedCb,
-                    options
-                  )
-                  picker.render()
-                })
+            loadTypeIndexesFor(kb.sym(webId)).then(function () {
+              // Assumes that the type index has an entry for addressbook
+              const options = {
+                defaultNewGroupName: 'Meeting Participants',
+                selectedGroup
               }
+              const picker = new UI.widgets.PeoplePicker(
+                context.div,
+                context.index.private[0],
+                groupPickedCb,
+                options
+              )
+              picker.render()
+            })
+          }
         })
       }
 
