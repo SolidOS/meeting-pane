@@ -23,7 +23,7 @@ async function appendMeetingPane (dom, uri) {
   dom.body.appendChild(paneDiv)
 }
 
-//const webIdToShow = 'https://timbl.com/timbl/Public/Test/Meeting/Brainstorming/index.ttl#this'
+// const webIdToShow = 'https://timbl.com/timbl/Public/Test/Meeting/Brainstorming/index.ttl#this'
 const webIdToShow = 'https://timea.solidcommunity.net/TestMeeting/index.ttl#this'
 
 logic.store.fetcher.load(webIdToShow).then(() => {
