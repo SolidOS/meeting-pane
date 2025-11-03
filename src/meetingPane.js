@@ -100,7 +100,7 @@ export default {
     const meeting = subject
     const meetingDoc = subject.doc()
     const meetingBase = subject.dir().uri
-    var div = dom.createElement('div')
+    const div = dom.createElement('div')
     const table = div.appendChild(dom.createElement('table'))
     table.style = 'width: 100%; height: 100%; margin:0;'
     const topTR = table.appendChild(dom.createElement('tr'))
@@ -434,7 +434,7 @@ export default {
       return makeNewPaneTool(toolObject, newPaneOptions)
     }
 
-    var makePicturesFolder = function (folderName) {
+    const makePicturesFolder = function (folderName) {
       const toolObject = {
         icon: 'noun_598334.svg', // Slideshow @@ find a "picture" icon?
         limit: 1,
@@ -452,7 +452,7 @@ export default {
       return makeNewPaneTool(toolObject, newPaneOptions)
     }
 
-    var makeMaterialsFolder = function (_folderName) {
+    const makeMaterialsFolder = function (_folderName) {
       const toolObject = {
         icon: 'noun_681601.svg', // Document
         limit: 1,
@@ -468,7 +468,7 @@ export default {
       return makeNewPaneTool(toolObject, options)
     }
 
-    var makeParticipantsGroup = function () {
+    const makeParticipantsGroup = function () {
       const toolObject = {
         icon: 'noun_339237.svg', // Group of people
         limit: 1, // Only one tab
@@ -764,7 +764,7 @@ export default {
             parameterCell.appendChild(UI.widgets.errorMessageBlock(dom, err))
           })
       }
-      var mintUI = UI.login.selectWorkspace(dom, appDetails, gotWS)
+      const mintUI = UI.login.selectWorkspace(dom, appDetails, gotWS)
       parameterCell.appendChild(mintUI)
     }
 
@@ -841,7 +841,7 @@ export default {
 
     const iconStyle = 'padding: 1em; width: 3em; height: 3em;'
     const iconCell = toolBar.appendChild(dom.createElement('td'))
-    var parameterCell = toolBar.appendChild(dom.createElement('td'))
+    const parameterCell = toolBar.appendChild(dom.createElement('td'))
     const star = iconCell.appendChild(dom.createElement('img'))
     let visible = false // the inividual tools tools
 
@@ -884,7 +884,7 @@ export default {
     })
 
     const iconArray = []
-    for (var i = 0; i < toolIcons.length; i++) {
+    for (let i = 0; i < toolIcons.length; i++) {
       const foo = function () {
         const toolObject = toolIcons[i]
         const icon = iconCell.appendChild(dom.createElement('img'))
@@ -903,7 +903,7 @@ export default {
       foo()
     }
 
-    var styleTheIcons = function (style) {
+    const styleTheIcons = function (style) {
       for (let i = 0; i < iconArray.length; i++) {
         let st = iconStyle + style
         if (toolIcons[i].disabled) {
@@ -912,12 +912,12 @@ export default {
         iconArray[i].setAttribute('style', st) // eg 'background-color: #ccc;'
       }
     }
-    var resetTools = function () {
+    const resetTools = function () {
       styleTheIcons('display: none;')
       star.setAttribute('style', iconStyle)
     }
 
-    var selectTool = function (icon) {
+    const selectTool = function (icon) {
       styleTheIcons('display: none;') // 'background-color: #ccc;'
       icon.setAttribute('style', iconStyle + 'background-color: yellow;')
     }
@@ -1190,7 +1190,7 @@ export default {
       }
     }
 
-    var options = { dom }
+    const options = { dom }
     options.predicate = ns.meeting('toolList')
     options.subject = subject
     options.ordered = true
@@ -1200,7 +1200,7 @@ export default {
     options.renderTabSettings = renderTabSettings
     options.backgroundColor =
       kb.anyValue(subject, ns.ui('backgroundColor')) || '#ddddcc'
-    var tabs = mainTR.appendChild(UI.tabs.tabWidget(options))
+    const tabs = mainTR.appendChild(UI.tabs.tabWidget(options))
 
     UI.aclControl.preventBrowserDropEvents(dom)
 
