@@ -1,48 +1,46 @@
+import path from 'path'
+import NodePolyfillPlugin from 'node-polyfill-webpack-plugin'
 
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const NodePolyfillPlugin = require("node-polyfill-webpack-plugin")
+export default [
+  {
+    mode: 'production',
+    entry: './src/meetingPane.js',
+    output: {
+      path: path.resolve(process.cwd(), 'dist'),
+      filename: 'meetingPane.js',
+      library: {
+        name: 'MeetingPane',
+        type: 'umd'
+      },
+      globalObject: 'this',
+      clean: false
+    },
+    plugins: [
+      new NodePolyfillPlugin()
+    ],
+    module: {
+      rules: [
+        {
+          test: /\.(js|ts)$/,
+          exclude: /node_modules/,
+          use: ['babel-loader'],
+        },
 
-module.exports = [{
-  mode: 'development',
-  entry: './dev/index.js',
-  plugins: [
-    new HtmlWebpackPlugin({ template: './dev/index.html' }),
-    new NodePolyfillPlugin()
-  ],
-  externals: {
-    fs: 'null',
-    'node-fetch': 'fetch',
-    'isomorphic-fetch': 'fetch',
-    xmldom: 'window',
-    'text-encoding': 'TextEncoder',
-    'whatwg-url': 'window',
-    '@trust/webcrypto': 'crypto'
-  },
-  devServer: {
-    static: './dist'
-  },
-  devtool: 'source-map',
-  resolve: {
-    fallback: { "path": false }
+        {
+          test: /\.ttl$/, // Target text  files
+          type: 'asset/source', // Load the file's content as a string
+        },
+
+      ],
+    },
+    externals: {
+      'solid-ui': 'UI',
+      'solid-logic': 'SolidLogic',
+      rdflib: '$rdf',
+    },
+    resolve: {
+      extensions: ['.js'],
+    },
+    devtool: false,
   }
-},
-{
-  mode: 'development',
-  entry: './src/meetingPane.js',
-  output: {
-    filename: 'meetingPane.js'
-  },
-  externals: {
-    fs: 'null',
-    'node-fetch': 'fetch',
-    'isomorphic-fetch': 'fetch',
-    xmldom: 'window',
-    'text-encoding': 'TextEncoder',
-    'whatwg-url': 'window',
-    '@trust/webcrypto': 'crypto'
-  },
-  devtool: 'source-map',
-  resolve: {
-    fallback: { "path": false }
-  }
-}]
+]
