@@ -33,13 +33,14 @@ export default [
 
       ],
     },
+    externals: {
+      'solid-ui': 'SolidUI',
+      'solid-logic': 'SolidLogic',
+      rdflib: '$rdf',
+    },
     resolve: {
-      extensions: ['*', '.js']
+      extensions: ['*', '.js'],
     },
-
-    devServer: {
-      static: './dist'
-    },
-    devtool: 'source-map',
+    devtool: false,
   }
 ]

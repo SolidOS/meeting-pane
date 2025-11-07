@@ -4,7 +4,7 @@
  */
 import * as UI from 'solid-ui'
 import * as $rdf from 'rdflib'
-import meetingDetailsFormText from './meetingDetailsForm'
+import { meetingDetailsFormText } from './meetingDetailsForm.ttl'
 import { solidLogicSingleton, authn } from 'solid-logic'
 
 const { typeIndex } = solidLogicSingleton
