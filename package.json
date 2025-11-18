@@ -19,7 +19,7 @@
     "preversion": "npm run lint",
     "postversion": "git push origin main --follow-tags",
     "watch": "webpack --watch",
-    "start": "webpack serve --config webpack.dev.config.js --open"
+    "start": "webpack serve --config webpack.dev.config.mjs --open"
   },
   "repository": {
     "type": "git",
