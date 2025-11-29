@@ -45,8 +45,8 @@
   "homepage": "https://github.com/solidos/meeting-pane/",
   "peerDependencies": {
     "rdflib": "^2.3.0",
-    "solid-logic": "^3.1.1-8dffdcb",
-    "solid-ui": "^2.6.1-e78cbe5"
+    "solid-logic": "^4.0.0",
+    "solid-ui": "^3.0.0"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.28.0",
@@ -59,8 +59,8 @@
     "neostandard": "^0.12.2",
     "node-polyfill-webpack-plugin": "^4.1.0",
     "rdflib": "^2.3.0",
-    "solid-logic": "^3.1.1-8dffdcb",
-    "solid-ui": "^2.6.1-5ad23f4",
+    "solid-logic": "^4.0.0",
+    "solid-ui": "^3.0.0",
     "typescript": "^5.9.2",
     "webpack": "^5.102.1",
     "webpack-cli": "^6.0.1",
