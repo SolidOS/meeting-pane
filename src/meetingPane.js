@@ -2,18 +2,18 @@
  **
  **  Putting together some of the tools we have to manage a Meeting
  */
+import * as UI from 'solid-ui'
+import * as $rdf from 'rdflib'
+import { meetingDetailsFormText } from './meetingDetailsForm.ttl'
+import { solidLogicSingleton, authn } from 'solid-logic'
 
-// const VideoRoomPrefix = 'https://appear.in/'
-const logic = require('solid-logic')
+const { typeIndex } = solidLogicSingleton
+const { loadTypeIndexesFor } = typeIndex
+
 const VideoRoomPrefix = 'https://meet.jit.si/'
-
-const UI = require('solid-ui')
 const ns = UI.ns
-const $rdf = require('rdflib')
 
-const meetingDetailsFormText = require('./meetingDetailsForm.js')
-
-module.exports = {
+export default {
   icon: UI.icons.iconBase + 'noun_66617.svg',
 
   name: 'meeting',
@@ -21,8 +21,8 @@ module.exports = {
   audience: [ns.solid('PowerUser')],
 
   label: function (subject, context) {
-    var kb = context.session.store
-    var ns = UI.ns
+    const kb = context.session.store
+    const ns = UI.ns
     if (kb.holds(subject, ns.rdf('type'), ns.meeting('Meeting'))) {
       return 'Meeting'
     }
@@ -38,14 +38,14 @@ module.exports = {
 
   mintNew: function (context, options) {
     return new Promise(function (resolve, reject) {
-      var kb = context.session.store
-      var ns = UI.ns
+      const kb = context.session.store
+      const ns = UI.ns
       options.newInstance =
         options.newInstance || kb.sym(options.newBase + 'index.ttl#this')
-      var meeting = options.newInstance
-      var meetingDoc = meeting.doc()
+      const meeting = options.newInstance
+      const meetingDoc = meeting.doc()
 
-      var me = logic.authn.currentUser()
+      const me = authn.currentUser()
 
       if (me) {
         kb.add(meeting, ns.dc('author'), me, meetingDoc)
@@ -59,7 +59,7 @@ module.exports = {
         new $rdf.Literal('#ddddcc', undefined, ns.xsd('color')),
         meetingDoc
       )
-      var toolList = new $rdf.Collection()
+      const toolList = new $rdf.Collection()
       kb.add(meeting, ns.meeting('toolList'), toolList, meetingDoc)
 
       toolList.elements.push(meeting) // Add the meeting itself - see renderMain()
@@ -83,42 +83,42 @@ module.exports = {
 
   render: function (subject, dataBrowserContext) {
     const dom = dataBrowserContext.dom
-    var kb = dataBrowserContext.session.store
-    var ns = UI.ns
-    var updater = kb.updater
-    var thisPane = this
+    const kb = dataBrowserContext.session.store
+    const ns = UI.ns
+    const updater = kb.updater
+    const thisPane = this
 
-    var complain = function complain (message, color) {
+    const complain = function complain (message, color) {
       console.log(message)
-      var pre = dom.createElement('pre')
+      const pre = dom.createElement('pre')
       pre.setAttribute('style', 'background-color: ' + color || '#eed' + ';')
       div.appendChild(pre)
       pre.appendChild(dom.createTextNode(message))
     }
 
-    var complainIfBad = function (ok, message) {
+    const complainIfBad = function (ok, message) {
       if (!ok) complain(message)
     }
 
-    var meeting = subject
-    var meetingDoc = subject.doc()
-    var meetingBase = subject.dir().uri
-    var div = dom.createElement('div')
-    var table = div.appendChild(dom.createElement('table'))
+    const meeting = subject
+    const meetingDoc = subject.doc()
+    const meetingBase = subject.dir().uri
+    const div = dom.createElement('div')
+    const table = div.appendChild(dom.createElement('table'))
     table.style = 'width: 100%; height: 100%; margin:0;'
-    var topTR = table.appendChild(dom.createElement('tr'))
+    const topTR = table.appendChild(dom.createElement('tr'))
     topTR.appendChild(dom.createElement('div')) // topDiv
-    var mainTR = table.appendChild(dom.createElement('tr'))
+    const mainTR = table.appendChild(dom.createElement('tr'))
 
-    var toolBar0 = table.appendChild(dom.createElement('td'))
-    var toolBar1 = toolBar0.appendChild(dom.createElement('table'))
-    var toolBar = toolBar1.appendChild(dom.createElement('tr'))
+    const toolBar0 = table.appendChild(dom.createElement('td'))
+    const toolBar1 = toolBar0.appendChild(dom.createElement('table'))
+    const toolBar = toolBar1.appendChild(dom.createElement('tr'))
 
     topTR.setAttribute('style', 'height: 2em;') // spacer if notthing else
 
-    var me = null // @@ Put code to find out logged in person
+    let me = null // @@ Put code to find out logged in person
 
-    var saveBackMeetingDoc = function () {
+    const saveBackMeetingDoc = function () {
       updater.put(
         meetingDoc,
         kb.statementsMatching(undefined, undefined, undefined, meetingDoc),
@@ -136,8 +136,8 @@ module.exports = {
       )
     }
 
-    var saveAppDocumentLinkAndAddNewThing = function (tool, thing, pred) {
-      var appDoc = thing.doc()
+    const saveAppDocumentLinkAndAddNewThing = function (tool, thing, pred) {
+      const appDoc = thing.doc()
       if (pred) {
         kb.add(meeting, pred, thing, appDoc) // Specific Link back to meeting
       }
@@ -156,16 +156,16 @@ module.exports = {
       )
     }
 
-    var makeToolNode = function (target, pred, label, iconURI) {
+    const makeToolNode = function (target, pred, label, iconURI) {
       if (pred) {
         kb.add(meeting, pred, target, meetingDoc)
       }
-      var x = UI.widgets.newThing(meetingDoc)
+      const x = UI.widgets.newThing(meetingDoc)
       if (label) kb.add(x, ns.rdfs('label'), label, meetingDoc)
       if (iconURI) kb.add(x, ns.meeting('icon'), kb.sym(iconURI), meetingDoc)
       kb.add(x, ns.rdf('type'), ns.meeting('Tool'), meetingDoc)
       kb.add(x, ns.meeting('target'), target, meetingDoc)
-      var toolList = kb.the(meeting, ns.meeting('toolList'))
+      const toolList = kb.the(meeting, ns.meeting('toolList'))
       toolList.elements.push(x)
       return x
     }
@@ -189,13 +189,13 @@ module.exports = {
 
     // ////////////////////  DRAG and Drop
 
-    var handleDroppedThing = function (target) {
+    const handleDroppedThing = function (target) {
       // @@ idea: look
       return new Promise(function (resolve) {
         // Add a meeting tab for a web resource.  Alas many resource canot be framed
         // as they block framing, or are insecure.
-        var addIframeTool = function (target) {
-          var tool = makeToolNode(
+        const addIframeTool = function (target) {
+          const tool = makeToolNode(
             target,
             UI.ns.wf('attachment'),
             UI.utils.label(target),
@@ -204,15 +204,15 @@ module.exports = {
           kb.add(tool, UI.ns.meeting('view'), 'iframe', meetingDoc)
         }
 
-        var addLink = function (target) {
+        const addLink = function (target) {
           const pred = ns.wf('attachment')
           kb.add(subject, pred, target, subject.doc())
-          var toolObject = {
+          const toolObject = {
             icon: 'noun_160581.svg', // right arrow "link"
             limit: 1,
             shareTab: true // but many things behind it
           }
-          var newPaneOptions = {
+          const newPaneOptions = {
             newInstance: subject, // kb.sym(subject.doc().uri + '#LinkListTool'),
             pane: dataBrowserContext.session.paneRegistry.byName('link'), // the pane to be used to mint a new thing
             predicate: ns.meeting('attachmentTool'),
@@ -225,15 +225,15 @@ module.exports = {
 
         // When paerson added to he meeting, make an ad hoc group
         // of meeting participants is one does not already exist, and add them
-        var addParticipant = function (target) {
-          var pref = kb.any(target, ns.foaf('preferredURI'))
-          var obj = pref ? kb.sym(pref) : target
-          var group = kb.any(meeting, ns.meeting('attendeeGroup'))
-          var addPersonToGroup = function (obj, group) {
-            var ins = [
+        const addParticipant = function (target) {
+          const pref = kb.any(target, ns.foaf('preferredURI'))
+          const obj = pref ? kb.sym(pref) : target
+          const group = kb.any(meeting, ns.meeting('attendeeGroup'))
+          const addPersonToGroup = function (obj, group) {
+            const ins = [
               $rdf.st(group, UI.ns.vcard('hasMember'), obj, group.doc())
             ] // @@@ Complex rules about webid?
-            var name =
+            const name =
               kb.any(obj, ns.vcard('fn')) || kb.any(obj, ns.foaf('name'))
             if (name) {
               ins.push($rdf.st(obj, UI.ns.vcard('fn'), name, group.doc()))
@@ -243,7 +243,7 @@ module.exports = {
               _body
             ) {
               if (!ok) {
-                complain("Can't read group to add person" + group)
+                complain('Can\'t read group to add person' + group)
                 return
               }
               kb.updater.update([], ins, function (uri, ok, body) {
@@ -260,7 +260,7 @@ module.exports = {
           }
           makeParticipantsGroup()
             .then(function (options) {
-              var group = options.newInstance
+              const group = options.newInstance
               addPersonToGroup(obj, group)
               kb.fetcher
                 .putBack(meetingDoc, { contentType: 'text/turtle' })
@@ -274,7 +274,7 @@ module.exports = {
         }
 
         console.log('Dropped on thing ' + target) // icon was: UI.icons.iconBase + 'noun_25830.svg'
-        var u = target.uri
+        const u = target.uri
         if (u.startsWith('http:') && u.indexOf('#') < 0) {
           // insecure Plain document
           addLink(target)
@@ -284,7 +284,7 @@ module.exports = {
           function addAttachmentTab (target) {
             target = googleMapsSpecial(target)
             console.log('make web page attachement tab ' + target) // icon was: UI.icons.iconBase + 'noun_25830.svg'
-            var tool = makeToolNode(
+            const tool = makeToolNode(
               target,
               UI.ns.wf('attachment'),
               UI.utils.label(target),
@@ -302,9 +302,9 @@ module.exports = {
             )
             return addAttachmentTab(target) // You can still try iframing it.  (Could also add to list of links in PersonTR widgets)
           } else {
-            var obj = target
-            var types = kb.findTypeURIs(obj)
-            for (var ty in types) {
+            const obj = target
+            const types = kb.findTypeURIs(obj)
+            for (const ty in types) {
               console.log('    drop object type includes: ' + ty)
             }
             if (
@@ -318,10 +318,10 @@ module.exports = {
             if (u.startsWith('https:') && u.indexOf('#') < 0) {
               // Plain secure document
               // can we iframe it?
-              var hh = kb.fetcher.getHeader(target, 'x-frame-options')
-              var ok2 = true
+              const hh = kb.fetcher.getHeader(target, 'x-frame-options')
+              let ok2 = true
               if (hh) {
-                for (var j = 0; j < hh.length; j++) {
+                for (let j = 0; j < hh.length; j++) {
                   console.log('x-frame-options: ' + hh[j])
                   if (hh[j].indexOf('sameorigin') < 0) {
                     // (and diff origin @@)
@@ -346,10 +346,10 @@ module.exports = {
     }
 
     // When a set of URIs are dropped on the tabs
-    var droppedURIHandler = function (uris) {
+    const droppedURIHandler = function (uris) {
       Promise.all(
         uris.map(function (u) {
-          var target = $rdf.sym(u) // Attachment needs text label to disinguish I think not icon.
+          const target = $rdf.sym(u) // Attachment needs text label to disinguish I think not icon.
           return handleDroppedThing(target) // can add to meetingDoc but must be sync
         })
       ).then(function (_a) {
@@ -357,7 +357,7 @@ module.exports = {
       })
     }
 
-    var droppedFileHandler = function (files) {
+    const droppedFileHandler = function (files) {
       UI.widgets.uploadFiles(
         kb.fetcher,
         files,
@@ -375,16 +375,16 @@ module.exports = {
 
     // //////////////////////////////////////////////////////  end of drag drop
 
-    var makeGroup = function (_toolObject) {
-      var newBase = meetingBase + 'Group/'
-      var kb = dataBrowserContext.session.store
-      var group = kb.any(meeting, ns.meeting('particpants'))
+    const makeGroup = function (_toolObject) {
+      const newBase = meetingBase + 'Group/'
+      const kb = dataBrowserContext.session.store
+      let group = kb.any(meeting, ns.meeting('particpants'))
       if (!group) {
         group = $rdf.sym(newBase + 'index.ttl#this')
       }
       console.log('Participant group: ' + group)
 
-      var tool = makeToolNode(
+      const tool = makeToolNode(
         group,
         ns.meeting('particpants'),
         'Particpants',
@@ -423,8 +423,8 @@ module.exports = {
       )
     }
     */
-    var makePoll = function (toolObject) {
-      var newPaneOptions = {
+    const makePoll = function (toolObject) {
+      const newPaneOptions = {
         useExisting: meeting, // Regard the meeting as being the schedulable event itself.
         // newInstance: meeting,
         pane: dataBrowserContext.session.paneRegistry.byName('schedule'),
@@ -437,13 +437,13 @@ module.exports = {
       return makeNewPaneTool(toolObject, newPaneOptions)
     }
 
-    var makePicturesFolder = function (folderName) {
-      var toolObject = {
+    const makePicturesFolder = function (folderName) {
+      const toolObject = {
         icon: 'noun_598334.svg', // Slideshow @@ find a "picture" icon?
         limit: 1,
         shareTab: true // but many things behind it
       }
-      var newPaneOptions = {
+      const newPaneOptions = {
         newInstance: kb.sym(meeting.dir().uri + folderName + '/'),
         pane: dataBrowserContext.session.paneRegistry.byName('folder'), // @@ slideshow??
         predicate: ns.meeting('pictures'),
@@ -455,13 +455,13 @@ module.exports = {
       return makeNewPaneTool(toolObject, newPaneOptions)
     }
 
-    var makeMaterialsFolder = function (_folderName) {
-      var toolObject = {
+    const makeMaterialsFolder = function (_folderName) {
+      const toolObject = {
         icon: 'noun_681601.svg', // Document
         limit: 1,
         shareTab: true // but many things behind it
       }
-      var options = {
+      const options = {
         newInstance: kb.sym(meeting.dir().uri + 'Files/'),
         pane: dataBrowserContext.session.paneRegistry.byName('folder'),
         predicate: ns.meeting('materialsFolder'),
@@ -471,13 +471,13 @@ module.exports = {
       return makeNewPaneTool(toolObject, options)
     }
 
-    var makeParticipantsGroup = function () {
-      var toolObject = {
+    const makeParticipantsGroup = function () {
+      const toolObject = {
         icon: 'noun_339237.svg', // Group of people
         limit: 1, // Only one tab
         shareTab: true // but many things behind it
       }
-      var options = {
+      const options = {
         newInstance: kb.sym(meeting.dir().uri + 'Attendees/index.ttl#this'),
         pane: dataBrowserContext.session.paneRegistry.byName('contact'),
         predicate: ns.meeting('attendeeGroup'),
@@ -492,8 +492,8 @@ module.exports = {
 
     //   Make Pad for notes of meeting
 
-    var makePad = function (toolObject) {
-      var newPaneOptions = {
+    const makePad = function (toolObject) {
+      const newPaneOptions = {
         newBase: meetingBase + 'SharedNotes/',
         predicate: UI.ns.meeting('sharedNotes'),
         tabTitle: 'Shared Notes',
@@ -504,7 +504,7 @@ module.exports = {
 
     //   Make Sub-meeting of meeting
 
-    var makeMeeting = function (toolObject) {
+    const makeMeeting = function (toolObject) {
       UI.widgets
         .askName(
           dom,
@@ -517,8 +517,8 @@ module.exports = {
           if (!name) {
             return resetTools()
           }
-          var URIsegment = encodeURIComponent(name)
-          var options = {
+          const URIsegment = encodeURIComponent(name)
+          const options = {
             newBase: meetingBase + URIsegment + '/', // @@@ sanitize
             predicate: UI.ns.meeting('subMeeting'),
             tabTitle: name,
@@ -539,10 +539,10 @@ module.exports = {
 
     function makeNewPaneTool (toolObject, options) {
       return new Promise(function (resolve, reject) {
-        var kb = dataBrowserContext.session.store
+        const kb = dataBrowserContext.session.store
         if (!options.useExisting) {
           // useExisting means use existing object in new role
-          var existing = kb.any(meeting, options.predicate)
+          const existing = kb.any(meeting, options.predicate)
           if (existing) {
             if (
               toolObject.limit &&
@@ -567,7 +567,7 @@ module.exports = {
                   UI.utils.label(options.predicate)
               )
               return resolve({
-                me: me,
+                me,
                 newInstance: existing,
                 instanceClass: options.instanceClass
               })
@@ -584,7 +584,7 @@ module.exports = {
         options.pane
           .mintNew(dataBrowserContext, options)
           .then(function (options) {
-            var tool = makeToolNode(
+            const tool = makeToolNode(
               options.newInstance,
               options.predicate,
               options.tabTitle,
@@ -610,20 +610,20 @@ module.exports = {
       })
     }
 
-    var makeAgenda = function (_toolObject) {
+    const makeAgenda = function (_toolObject) {
       // selectTool(icon)
     }
 
-    var makeActions = function (_toolObject) {
-      var newBase = meetingBase + 'Actions/'
-      var kb = dataBrowserContext.session.store
+    const makeActions = function (_toolObject) {
+      const newBase = meetingBase + 'Actions/'
+      const kb = dataBrowserContext.session.store
       if (kb.holds(meeting, ns.meeting('actions'))) {
         console.log('Ignored - already have actions')
         return // already got one
       }
-      var appDoc = kb.sym(newBase + 'config.ttl')
-      var newInstance = kb.sym(newBase + 'config.ttl#this')
-      var stateStore = kb.sym(newBase + 'state.ttl')
+      const appDoc = kb.sym(newBase + 'config.ttl')
+      const newInstance = kb.sym(newBase + 'config.ttl#this')
+      const stateStore = kb.sym(newBase + 'state.ttl')
 
       kb.add(
         newInstance,
@@ -640,7 +640,7 @@ module.exports = {
 
       // Flag its type in the chat itself as well as in the master meeting config file
       kb.add(newInstance, ns.rdf('type'), ns.wf('Tracker'), appDoc)
-      var tool = makeToolNode(
+      const tool = makeToolNode(
         newInstance,
         ns.meeting('actions'),
         'Actions',
@@ -653,18 +653,18 @@ module.exports = {
       )
     }
 
-    var makeChat = function (_toolObject) {
-      var newBase = meetingBase + 'Chat/'
-      var kb = dataBrowserContext.session.store
+    const makeChat = function (_toolObject) {
+      const newBase = meetingBase + 'Chat/'
+      const kb = dataBrowserContext.session.store
       if (kb.holds(meeting, ns.meeting('chat'))) {
         console.log('Ignored - already have chat')
         return // already got one
       }
-      var messageStore = kb.sym(newBase + 'chat.ttl')
+      const messageStore = kb.sym(newBase + 'chat.ttl')
 
       kb.add(messageStore, ns.rdf('type'), ns.meeting('Chat'), messageStore)
 
-      var tool = makeToolNode(
+      const tool = makeToolNode(
         messageStore,
         ns.meeting('chat'),
         'Chat',
@@ -673,9 +673,9 @@ module.exports = {
       saveAppDocumentLinkAndAddNewThing(tool, messageStore, ns.meeting('chat'))
     }
 
-    var makeVideoCall = function (_toolObject) {
-      var kb = dataBrowserContext.session.store
-      var newInstance = $rdf.sym(VideoRoomPrefix + UI.utils.genUuid())
+    const makeVideoCall = function (_toolObject) {
+      const kb = dataBrowserContext.session.store
+      const newInstance = $rdf.sym(VideoRoomPrefix + UI.utils.genUuid())
 
       if (kb.holds(meeting, ns.meeting('videoCallPage'))) {
         console.log('Ignored - already have a videoCallPage')
@@ -687,7 +687,7 @@ module.exports = {
         ns.meeting('VideoCallPage'),
         meetingDoc
       )
-      var tool = makeToolNode(
+      const tool = makeToolNode(
         newInstance,
         ns.meeting('videoCallPage'),
         'Video call',
@@ -697,17 +697,17 @@ module.exports = {
       saveBackMeetingDoc()
     }
 
-    var makeAttachment = function (_toolObject) {
+    const makeAttachment = function (_toolObject) {
       UI.widgets
         .askName(dom, kb, parameterCell, ns.log('uri'), UI.ns.rdf('Resource'))
         .then(function (uri) {
           if (!uri) {
             return resetTools()
           }
-          var kb = dataBrowserContext.session.store
-          var ns = UI.ns
-          var target = kb.sym(uri)
-          var tool = makeToolNode(
+          const kb = dataBrowserContext.session.store
+          const ns = UI.ns
+          const target = kb.sym(uri)
+          const tool = makeToolNode(
             target,
             ns.wf('attachment'),
             UI.utils.label(target),
@@ -721,10 +721,10 @@ module.exports = {
         })
     }
 
-    var makeSharing = function (toolObject) {
-      var kb = dataBrowserContext.session.store
-      var ns = UI.ns
-      var target = meeting.dir()
+    const makeSharing = function (toolObject) {
+      const kb = dataBrowserContext.session.store
+      const ns = UI.ns
+      const target = meeting.dir()
       if (
         toolObject.limit &&
         toolObject.limit === 1 &&
@@ -733,7 +733,7 @@ module.exports = {
         complain('Ignored - already have ' + UI.utils.label(options.predicate))
         return
       }
-      var tool = makeToolNode(
+      const tool = makeToolNode(
         target,
         ns.wf('sharingControl'),
         'Sharing',
@@ -743,37 +743,37 @@ module.exports = {
       saveBackMeetingDoc()
     }
 
-    var makeNewMeeting = function () {
+    const makeNewMeeting = function () {
       // @@@ make option of continuing series
-      var appDetails = { noun: 'meeting' }
-      var gotWS = function (ws, base) {
+      const appDetails = { noun: 'meeting' }
+      const gotWS = function (ws, base) {
         thisPane
           .mintNew(dataBrowserContext, { newBase: base })
           .then(function (options) {
-            var newInstance = options.newInstance
+            const newInstance = options.newInstance
             parameterCell.removeChild(mintUI)
-            var p = parameterCell.appendChild(dom.createElement('p'))
+            const p = parameterCell.appendChild(dom.createElement('p'))
             p.setAttribute('style', 'font-size: 140%;')
             p.innerHTML =
-              "Your <a target='_blank' href='" +
+              'Your <a target=\'_blank\' href=\'' +
               newInstance.uri +
-              "'><b>new meeting</b></a> is ready to be set up. " +
-              "<br/><br/><a target='_blank' href='" +
+              '\'><b>new meeting</b></a> is ready to be set up. ' +
+              '<br/><br/><a target=\'_blank\' href=\'' +
               newInstance.uri +
-              "'>Go to your new meeting.</a>"
+              '\'>Go to your new meeting.</a>'
           })
           .catch(function (err) {
             parameterCell.removeChild(mintUI)
             parameterCell.appendChild(UI.widgets.errorMessageBlock(dom, err))
           })
       }
-      var mintUI = UI.login.selectWorkspace(dom, appDetails, gotWS)
+      const mintUI = UI.login.selectWorkspace(dom, appDetails, gotWS)
       parameterCell.appendChild(mintUI)
     }
 
     // //////////////////////////////////////////////////////////// end of new tab creation functions
 
-    var toolIcons = [
+    const toolIcons = [
       {
         icon: 'noun_339237.svg',
         maker: makeGroup,
@@ -832,7 +832,7 @@ module.exports = {
       }
     ] // 'noun_66617.svg'
 
-    var settingsForm = $rdf.sym(
+    const settingsForm = $rdf.sym(
       'https://solid.github.io/solid-panes/meeting/meetingDetailsForm.ttl#settings'
     )
     $rdf.parse(
@@ -842,17 +842,17 @@ module.exports = {
       'text/turtle'
     ) // Load form directly
 
-    var iconStyle = 'padding: 1em; width: 3em; height: 3em;'
-    var iconCell = toolBar.appendChild(dom.createElement('td'))
-    var parameterCell = toolBar.appendChild(dom.createElement('td'))
-    var star = iconCell.appendChild(dom.createElement('img'))
-    var visible = false // the inividual tools tools
+    const iconStyle = 'padding: 1em; width: 3em; height: 3em;'
+    const iconCell = toolBar.appendChild(dom.createElement('td'))
+    const parameterCell = toolBar.appendChild(dom.createElement('td'))
+    const star = iconCell.appendChild(dom.createElement('img'))
+    let visible = false // the inividual tools tools
 
     star.setAttribute('src', UI.icons.iconBase + 'noun_19460_green.svg') //  noun_272948.svg
     star.setAttribute('style', iconStyle + 'opacity: 50%;')
     star.setAttribute('title', 'Add another tool to the meeting')
 
-    var selectNewTool = function (_event) {
+    const selectNewTool = function (_event) {
       visible = !visible
       star.setAttribute(
         'style',
@@ -861,8 +861,8 @@ module.exports = {
       styleTheIcons(visible ? '' : 'display: none;')
     }
 
-    var loginOutButton
-    logic.authn.checkUser().then(webId => {
+    let loginOutButton
+    authn.checkUser().then(webId => {
       if (webId) {
         me = webId
         star.addEventListener('click', selectNewTool)
@@ -886,16 +886,16 @@ module.exports = {
       parameterCell.appendChild(loginOutButton)
     })
 
-    var iconArray = []
-    for (var i = 0; i < toolIcons.length; i++) {
-      var foo = function () {
-        var toolObject = toolIcons[i]
-        var icon = iconCell.appendChild(dom.createElement('img'))
+    const iconArray = []
+    for (let i = 0; i < toolIcons.length; i++) {
+      const foo = function () {
+        const toolObject = toolIcons[i]
+        const icon = iconCell.appendChild(dom.createElement('img'))
         icon.setAttribute('src', UI.icons.iconBase + toolObject.icon)
         icon.setAttribute('style', iconStyle + 'display: none;')
         iconArray.push(icon)
         icon.tool = toolObject
-        var maker = toolObject.maker
+        const maker = toolObject.maker
         if (!toolObject.disabled) {
           icon.addEventListener('click', function (_event) {
             selectTool(icon)
@@ -906,44 +906,44 @@ module.exports = {
       foo()
     }
 
-    var styleTheIcons = function (style) {
-      for (var i = 0; i < iconArray.length; i++) {
-        var st = iconStyle + style
+    const styleTheIcons = function (style) {
+      for (let i = 0; i < iconArray.length; i++) {
+        let st = iconStyle + style
         if (toolIcons[i].disabled) {
           st += 'opacity: 0.3;'
         }
         iconArray[i].setAttribute('style', st) // eg 'background-color: #ccc;'
       }
     }
-    var resetTools = function () {
+    const resetTools = function () {
       styleTheIcons('display: none;')
       star.setAttribute('style', iconStyle)
     }
 
-    var selectTool = function (icon) {
+    const selectTool = function (icon) {
       styleTheIcons('display: none;') // 'background-color: #ccc;'
       icon.setAttribute('style', iconStyle + 'background-color: yellow;')
     }
 
     // //////////////////////////////
 
-    var renderTab = function (div, item) {
+    const renderTab = function (div, item) {
       if (kb.holds(item, ns.rdf('type'), ns.meeting('Tool'))) {
-        var target = kb.any(item, ns.meeting('target'))
-        var label = kb.any(item, ns.rdfs('label'))
+        const target = kb.any(item, ns.meeting('target'))
+        let label = kb.any(item, ns.rdfs('label'))
         label = label ? label.value : UI.utils.label(target)
-        var s = div.appendChild(dom.createElement('div'))
+        const s = div.appendChild(dom.createElement('div'))
         s.textContent = label
         s.setAttribute('style', 'margin-left: 0.7em')
-        var icon = kb.any(item, ns.meeting('icon'))
+        const icon = kb.any(item, ns.meeting('icon'))
         if (icon) {
           // Make sure the icon is cleanly on the left of the label
-          var table = div.appendChild(dom.createElement('table'))
-          var tr = table.appendChild(dom.createElement('tr'))
-          var left = tr.appendChild(dom.createElement('td'))
-          var right = tr.appendChild(dom.createElement('td'))
+          const table = div.appendChild(dom.createElement('table'))
+          const tr = table.appendChild(dom.createElement('tr'))
+          const left = tr.appendChild(dom.createElement('td'))
+          const right = tr.appendChild(dom.createElement('td'))
           // var img = div.appendChild(dom.createElement('img'))
-          var img = left.appendChild(dom.createElement('img'))
+          const img = left.appendChild(dom.createElement('img'))
           img.setAttribute('src', icon.uri)
           // img.setAttribute('style', 'max-width: 1.5em; max-height: 1.5em;') // @@ SVG shrinks to 0
           img.setAttribute('style', 'width: 1.5em; height: 1.5em;') // @
@@ -957,21 +957,21 @@ module.exports = {
       }
     }
 
-    var tipDiv = function (text) {
-      var d = dom.createElement('div')
-      var p = d.appendChild(dom.createElement('p'))
+    const tipDiv = function (text) {
+      const d = dom.createElement('div')
+      const p = d.appendChild(dom.createElement('p'))
       p.setAttribute('style', 'margin: 0em; padding:3em; color: #888;')
       p.textContent = 'Tip: ' + text
       return d
     }
 
-    var renderTabSettings = function (containerDiv, subject) {
+    const renderTabSettings = function (containerDiv, subject) {
       containerDiv.innerHTML = ''
       containerDiv.style += 'border-color: #eed;'
       containerDiv.appendChild(dom.createElement('h3')).textContent =
         'Adjust this tab'
       if (kb.holds(subject, ns.rdf('type'), ns.meeting('Tool'))) {
-        var form = $rdf.sym(
+        const form = $rdf.sym(
           'https://solid.github.io/solid-panes/meeting/meetingDetailsForm.ttl#settings'
         )
         UI.widgets.appendForm(
@@ -983,20 +983,20 @@ module.exports = {
           meeting.doc(),
           complainIfBad
         )
-        var delButton = UI.widgets.deleteButtonWithCheck(
+        const delButton = UI.widgets.deleteButtonWithCheck(
           dom,
           containerDiv,
           'tab',
           function () {
-            var toolList = kb.the(meeting, ns.meeting('toolList'))
-            for (var i = 0; i < toolList.elements.length; i++) {
+            const toolList = kb.the(meeting, ns.meeting('toolList'))
+            for (let i = 0; i < toolList.elements.length; i++) {
               if (toolList.elements[i].sameTerm(subject)) {
                 toolList.elements.splice(i, 1)
                 break
               }
             }
-            var target = kb.any(subject, ns.meeting('target'))
-            var ds = kb
+            const target = kb.any(subject, ns.meeting('target'))
+            const ds = kb
               .statementsMatching(subject)
               .concat(kb.statementsMatching(undefined, undefined, subject))
               .concat(kb.statementsMatching(meeting, undefined, target))
@@ -1015,17 +1015,17 @@ module.exports = {
     }
 
     const renderMain = function (containerDiv, subject) {
-      var pane = null
-      var table
-      var selectedGroup = null
+      let pane = null
+      let table
+      let selectedGroup = null
       containerDiv.innerHTML = ''
-      var complainIfBad = function (ok, message) {
+      const complainIfBad = function (ok, message) {
         if (!ok) {
           containerDiv.textContent = '' + message
         }
       }
-      var showIframe = function (target) {
-        var iframe = containerDiv.appendChild(dom.createElement('iframe'))
+      const showIframe = function (target) {
+        const iframe = containerDiv.appendChild(dom.createElement('iframe'))
         // iframe.setAttribute('sandbox', '') // All restrictions
         iframe.setAttribute('src', target.uri)
         // See https://stackoverflow.com/questions/325273/make-iframe-to-fit-100-of-containers-remaining-height
@@ -1048,12 +1048,13 @@ module.exports = {
         iframe.setAttribute('name', 'disable-x-frame-options') // For electron: see https://github.com/electron/electron/pull/573
         containerDiv.style.padding = 0
       }
-      var renderPeoplePicker = function () {
-        var context = { div: containerDiv, dom: dom }
+
+      const renderPeoplePicker = function () {
+        const context = { div: containerDiv, dom }
         containerDiv.appendChild(dom.createElement('h4')).textContent =
           'Meeting Participants'
-        var groupPickedCb = function (group) {
-          var toIns = [
+        const groupPickedCb = function (group) {
+          const toIns = [
             $rdf.st(
               meeting,
               ns.meeting('particpantGroup'),
@@ -1071,26 +1072,30 @@ module.exports = {
         }
         selectedGroup = kb.any(meeting, ns.meeting('particpantGroup'))
 
-        logic.loadTypeIndexes(context).then(function () {
-          // Assumes that the type index has an entry for addressbook
-          var options = {
-            defaultNewGroupName: 'Meeting Participants',
-            selectedGroup: selectedGroup
+        authn.checkUser().then(webId => {
+          if (webId) {
+            loadTypeIndexesFor(kb.sym(webId)).then(function () {
+              // Assumes that the type index has an entry for addressbook
+              const options = {
+                defaultNewGroupName: 'Meeting Participants',
+                selectedGroup
+              }
+              const picker = new UI.widgets.PeoplePicker(
+                context.div,
+                context.index.private[0],
+                groupPickedCb,
+                options
+              )
+              picker.render()
+            })
           }
-          var picker = new UI.widgets.PeoplePicker(
-            context.div,
-            context.index.private[0],
-            groupPickedCb,
-            options
-          )
-          picker.render()
         })
       }
 
-      var renderDetails = function () {
+      const renderDetails = function () {
         containerDiv.appendChild(dom.createElement('h3')).textContent =
           'Details of meeting'
-        var form = $rdf.sym(
+        const form = $rdf.sym(
           'https://solid.github.io/solid-panes/meeting/meetingDetailsForm.ttl#main'
         )
         UI.widgets.appendForm(
@@ -1107,23 +1112,23 @@ module.exports = {
             'Drag URL-bar icons of web pages into the tab bar on the left to add new meeting materials.'
           )
         )
-        me = logic.authn.currentUser()
+        me = authn.currentUser()
         if (me) {
           kb.add(meeting, ns.dc('author'), me, meetingDoc) // @@ should nly be on initial creation?
         }
-        var context = {
+        const context = {
           noun: 'meeting',
-          me: me,
+          me,
           statusArea: containerDiv,
           div: containerDiv,
-          dom: dom
+          dom
         }
         UI.login
           .registrationControl(context, meeting, ns.meeting('Meeting'))
           .then(function (_context) {
             console.log('Registration control finsished.')
           })
-        var options = {}
+        const options = {}
         UI.pad.manageParticipation(
           dom,
           containerDiv,
@@ -1134,31 +1139,31 @@ module.exports = {
         )
 
         // "Make a new meeting" button
-        var imageStyle = 'height: 2em; width: 2em; margin:0.5em;'
-        var detailsBottom = containerDiv.appendChild(dom.createElement('div'))
-        var spawn = detailsBottom.appendChild(dom.createElement('img'))
+        const imageStyle = 'height: 2em; width: 2em; margin:0.5em;'
+        const detailsBottom = containerDiv.appendChild(dom.createElement('div'))
+        const spawn = detailsBottom.appendChild(dom.createElement('img'))
         spawn.setAttribute('src', UI.icons.iconBase + 'noun_145978.svg')
         spawn.setAttribute('title', 'Make a fresh new meeting')
         spawn.addEventListener('click', makeNewMeeting)
         spawn.setAttribute('style', imageStyle)
 
         // "Fork me on Github" button
-        var forka = detailsBottom.appendChild(dom.createElement('a'))
+        const forka = detailsBottom.appendChild(dom.createElement('a'))
         forka.setAttribute('href', 'https://github.com/solid/solid-panes') // @@ Move when code moves
         forka.setAttribute('target', '_blank')
-        var fork = forka.appendChild(dom.createElement('img'))
+        const fork = forka.appendChild(dom.createElement('img'))
         fork.setAttribute('src', UI.icons.iconBase + 'noun_368567.svg')
         fork.setAttribute('title', 'Fork me on github')
         fork.setAttribute('style', imageStyle + 'opacity: 50%;')
       }
 
       if (kb.holds(subject, ns.rdf('type'), ns.meeting('Tool'))) {
-        var target = kb.any(subject, ns.meeting('target'))
+        const target = kb.any(subject, ns.meeting('target'))
         if (target.sameTerm(meeting) && !kb.any(subject, ns.meeting('view'))) {
           // self reference? force details form
           renderDetails() // Legacy meeting instances
         } else {
-          var view = kb.any(subject, ns.meeting('view'))
+          let view = kb.any(subject, ns.meeting('view'))
           view = view ? view.value : null
           if (view === 'details') {
             renderDetails()
@@ -1193,7 +1198,7 @@ module.exports = {
       }
     }
 
-    var options = { dom: dom }
+    const options = { dom }
     options.predicate = ns.meeting('toolList')
     options.subject = subject
     options.ordered = true
@@ -1203,7 +1208,7 @@ module.exports = {
     options.renderTabSettings = renderTabSettings
     options.backgroundColor =
       kb.anyValue(subject, ns.ui('backgroundColor')) || '#ddddcc'
-    var tabs = mainTR.appendChild(UI.tabs.tabWidget(options))
+    const tabs = mainTR.appendChild(UI.tabs.tabWidget(options))
 
     UI.aclControl.preventBrowserDropEvents(dom)
 

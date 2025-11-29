@@ -1,32 +1,29 @@
 {
   "name": "meeting-pane",
-  "version": "2.5.1",
+  "version": "3.0.0",
   "description": "Solid-compatible Panes: meeting collaborative tool",
-  "main": "./lib/meetingPane.js",
+  "main": "dist/meetingPane.js",
   "files": [
-    "src",
-    "lib"
+    "dist/",
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
-    "build": "npm run clean && npm run build-lib && webpack",
-    "build-browserified": "npm run build",
-    "build-dist": "webpack --progress --color --mode=production",
-    "build-dev": "webpack --progress --color --mode=development",
-    "build-lib": "babel src -d lib --source-maps --extensions '.ts,.js'",
-    "build-types": "npm run build-version && tsc --declaration --emitDeclarationOnly",
-    "build-version": "./timestamp.sh > src/versionInfo.ts  && eslint 'src/versionInfo.ts' --fix",
-    "lint": "eslint '*.js'",
-    "lint-fix": "eslint '*.js' --fix",
-    "clean": "rm -rf lib && rm -rf dist",
-    "test": "npm run lint",
-    "prepublishOnly": "npm test && npm run build",
-    "postpublish": "git push origin main --follow-tags",
+    "clean": "rm -rf dist",
+    "build": "npm run clean && npm run build-dist",
+    "build-dist": "webpack --progress",
+    "lint": "eslint",
+    "lint-fix": "eslint --fix",
+    "test": "echo \"No tests specified\" && exit 0",
+    "prepublishOnly": "npm run build && npm run lint",
+    "preversion": "npm run lint",
+    "postversion": "git push origin main --follow-tags",
     "watch": "webpack --watch",
-    "start": "webpack serve --open"
+    "start": "webpack serve --config webpack.dev.config.mjs --open"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/solid/meeting-pane"
+    "url": "git+https://github.com/solid/meeting-pane.git"
   },
   "keywords": [
     "solid",
@@ -46,35 +43,27 @@
     "url": "https://github.com/solidos/meeting-pane/issues/"
   },
   "homepage": "https://github.com/solidos/meeting-pane/",
-  "dependencies": {
-    "solid-ui": "^2.6.1"
+  "peerDependencies": {
+    "rdflib": "^2.3.0",
+    "solid-logic": "^4.0.0",
+    "solid-ui": "^3.0.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.28.0",
-    "@babel/core": "^7.28.0",
     "@babel/preset-env": "^7.28.0",
-    "@webpack-cli/serve": "^3.0.1",
+    "babel-loader": "^10.0.0",
+    "babel-plugin-inline-import": "^3.0.0",
     "buffer": "^6.0.3",
     "eslint": "^9.33.0",
     "globals": "^16.3.0",
     "html-webpack-plugin": "^5.6.3",
-    "husky": "^9.1.7",
-    "lint-staged": "^16.2.0",
+    "neostandard": "^0.12.2",
     "node-polyfill-webpack-plugin": "^4.1.0",
+    "rdflib": "^2.3.0",
+    "solid-logic": "^4.0.0",
+    "solid-ui": "^3.0.0",
     "typescript": "^5.9.2",
-    "webpack": "^5.101.0",
+    "webpack": "^5.102.1",
     "webpack-cli": "^6.0.1",
     "webpack-dev-server": "^5.2.2"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged",
-      "pre-push": "npm test"
-    }
-  },
-  "lint-staged": {
-    "*.js": [
-      "eslint"
-    ]
   }
 }
