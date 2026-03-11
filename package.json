@@ -2,9 +2,10 @@
   "name": "meeting-pane",
   "version": "3.0.1",
   "description": "Solid-compatible Panes: meeting collaborative tool",
-  "main": "dist/index.js",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "files": [
-    "dist/",
+    "lib/",
     "README.md",
     "LICENSE"
   ],
