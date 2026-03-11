@@ -3,23 +3,12 @@
   "version": "3.0.1",
   "description": "Solid-compatible Panes: meeting collaborative tool",
   "main": "lib/meeting-pane.js",
-  "types": "index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./index.d.ts",
-      "default": "./lib/meeting-pane.js"
-    },
-    "./styles.css": {
-      "default": "./lib/styles/meetingPane.css"
-    }
-  },
-  "style": "lib/styles/meetingPane.css",
+  "types": "lib/index.d.ts",
   "sideEffects": [
     "**/*.css"
   ],
   "files": [
     "lib/",
-    "index.d.ts",
     "README.md",
     "LICENSE"
   ],
