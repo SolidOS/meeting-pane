@@ -9,7 +9,7 @@
 }
 
 .meetingPane {
-  padding-right: 1.5em;
+  padding: 5em;
   box-sizing: border-box;
 }
 
@@ -25,16 +25,17 @@
   flex-wrap: nowrap !important;
   align-items: center !important;
   justify-content: flex-start !important;
-  gap: 0;
+  gap: 1em;
 }
 
 .meetingPane .meetingToolIcon {
   box-sizing: border-box;
-  padding: 1em; 
-  width: 3em; 
-  height: 3em;
-  min-width: 3em;
-  min-height: 3em;
+  padding: 0 !important;
+  width: 3.1em;
+  height: 3.1em;
+  min-width: 3.1em;
+  min-height: 3.1em;
+  margin: 0.5em !important;
   opacity: 50%;
   display: none !important;
   vertical-align: middle;
@@ -57,12 +58,12 @@
 .meetingPane .meetingToolIconAddButton {
   padding: 0 !important;
   margin: 0.5em !important;
-  width: 2em !important;
-  height: 2em !important;
-  max-width: 2em !important;
-  max-height: 2em !important;
-  min-width: 2em !important;
-  min-height: 2em !important;
+  width: 3.1em !important;
+  height: 3.1em !important;
+  max-width: 3.1em !important;
+  max-height: 3.1em !important;
+  min-width: 3.1em !important;
+  min-height: 3.1em !important;
 }
 
 .meetingToolLabel {
