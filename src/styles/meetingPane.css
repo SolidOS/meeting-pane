@@ -1,0 +1,110 @@
+.meetingPaneTable {
+  border-collapse: collapse;
+  width: 100%; 
+  height: 100%; 
+  margin: 0;
+}
+.meetingPaneHeader {
+  height: 2em;
+}
+
+.meetingPane {
+  padding-right: 1.5em;
+  box-sizing: border-box;
+}
+
+.meetingPane .meetingToolBarIcons {
+  width: 1%;
+  white-space: nowrap !important;
+  vertical-align: middle;
+}
+
+.meetingPane .meetingToolIconRow {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: var(--spacing-xl);
+}
+
+.meetingPane .meetingToolIcon {
+  box-sizing: border-box;
+  padding: 0.24em !important;
+  width: 4.1em !important;
+  height: 4.1em !important;
+  max-width: 4.1em !important;
+  max-height: 4.1em !important;
+  min-width: 4.1em !important;
+  min-height: 4.1em !important;
+  margin: 0 !important;
+  opacity: 50%;
+  display: none !important;
+  vertical-align: middle;
+  object-fit: contain;
+  flex: 0 0 auto !important;
+}
+
+.meetingPane .meetingToolIcon-visible {
+  display: inline-block !important;
+  opacity: 100% !important;
+}
+.meetingPane .meetingToolIcon-yellow {
+  background-color: yellow;
+}
+
+.meetingPane .meetingToolIcon-disabled {
+  opacity: 30%;
+}
+
+.meetingPane .meetingToolIconAddButton {
+  width: 4.45em !important;
+  height: 4.45em !important;
+  max-width: 4.45em !important;
+  max-height: 4.45em !important;
+  min-width: 4.45em !important;
+  min-height: 4.45em !important;
+}
+
+.meetingToolLabel {
+  margin-left: 0.7em;
+}
+.meetingToolIconImg {
+  width: 1em; 
+  height: 1em;
+}
+.meetingToolTip {
+  margin: 0em; 
+  padding:3em; 
+  color: #888;
+}
+.meetingPaneDeleteButton {
+  width: 1.5em; 
+  height: 1.5em;
+}
+.meetingPaneIframe {
+  border: none; 
+  margin: 0; 
+  padding: 0; 
+  height: 100%; 
+  width: 100%;
+}
+.meetingToolIconSpawn {
+  height: 2em; 
+  width: 2em; 
+  margin: var(--spacing-xs);
+}
+.meetingToolIconForkGithub {
+  height: 2em; 
+  width: 2em; 
+  margin: var(--spacing-xs);
+  opacity: 50%;
+}
+.meetingPaneTableMain {
+  border-collapse: collapse;
+  width: 100%; 
+}
+/* ai generated below */
+.meetingPaneMainRow {
+  height: calc(100% - 50px); 
+}
