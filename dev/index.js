@@ -25,8 +25,8 @@ async function appendMeetingPane (dom, uri) {
 }
 
 // const webIdToShow = 'https://timbl.com/timbl/Public/Test/Meeting/Brainstorming/index.ttl#this'
-// const webIdToShow = 'https://timea.solidcommunity.net/TestMeeting/index.ttl#this'
-const webIdToShow = 'https://sstratsianis.solidcommunity.net/MeetingTest1/index.ttl#this'
+const webIdToShow = 'https://timea.solidcommunity.net/TestMeeting/index.ttl#this'
+
 logic.store.fetcher.load(webIdToShow).then(() => {
   appendMeetingPane(document, webIdToShow)
 })

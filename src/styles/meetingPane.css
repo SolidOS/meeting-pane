@@ -93,12 +93,12 @@
 .meetingToolIconSpawn {
   height: 2em; 
   width: 2em; 
-  margin: var(--spacing-xs);
+  margin: var(--spacing-xs, 0.5em);
 }
 .meetingToolIconForkGithub {
   height: 2em; 
   width: 2em; 
-  margin: var(--spacing-xs);
+  margin: var(--spacing-xs, 0.5em);
   opacity: 50%;
 }
 .meetingPaneTableMain {
