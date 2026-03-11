@@ -1,9 +1,9 @@
 import path from 'path'
 import NodePolyfillPlugin from 'node-polyfill-webpack-plugin'
-import { getModuleRules } from './webpack.module.rules.mjs'
+import { moduleRules } from './webpack.module.rules.mjs'
 import { createRequire } from 'module'
 import TerserPlugin from 'terser-webpack-plugin'
-import MiniCssExtractPlugin from 'mini-css-extract-plugin'
+import CopyPlugin from 'copy-webpack-plugin'
 
 const require = createRequire(import.meta.url)
 
@@ -24,7 +24,7 @@ const common = {
     new NodePolyfillPlugin()
   ],
   module: {
-    rules: getModuleRules(MiniCssExtractPlugin.loader),
+    rules: moduleRules,
   },
   externals: {
     'solid-ui': 'UI',
@@ -56,8 +56,13 @@ const normalConfig = {
   },
   plugins: [
     ...(common.plugins || []),
-    new MiniCssExtractPlugin({
-      filename: 'meeting-pane.css',
+    new CopyPlugin({
+      patterns: [
+        {
+          from: path.resolve('src/styles'),
+          to: path.resolve('lib/styles'),
+        },
+      ],
     }),
   ],
   optimization: {
@@ -81,8 +86,13 @@ const minConfig = {
   },
   plugins: [
     ...(common.plugins || []),
-    new MiniCssExtractPlugin({
-      filename: 'meeting-pane.css',
+    new CopyPlugin({
+      patterns: [
+        {
+          from: path.resolve('src/styles'),
+          to: path.resolve('lib/styles'),
+        },
+      ],
     }),
   ],
   optimization: {
