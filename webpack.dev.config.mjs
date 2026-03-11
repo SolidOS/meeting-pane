@@ -1,5 +1,6 @@
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import NodePolyfillPlugin from 'node-polyfill-webpack-plugin'
+import { moduleRules } from './webpack.module.rules.mjs'
 
 export default [
   {
@@ -9,7 +10,7 @@ export default [
       new HtmlWebpackPlugin({ template: './dev/index.html' }),
       new NodePolyfillPlugin()
     ],
-       module: {
+    module: {
       rules: moduleRules,
     },
     resolve: {

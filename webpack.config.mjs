@@ -23,7 +23,7 @@ const common = {
   plugins: [
     new NodePolyfillPlugin()
   ],
-    module: {
+  module: {
     rules: moduleRules,
   },
   externals: {
@@ -39,7 +39,6 @@ const common = {
   },
   devtool: 'source-map',
 }
-
 
 const normalConfig = {
   ...common,
@@ -112,4 +111,3 @@ const minConfig = {
 }
 
 export default [normalConfig, minConfig]
-
