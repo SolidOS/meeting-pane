@@ -4,6 +4,9 @@
   "description": "Solid-compatible Panes: meeting collaborative tool",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
+  "sideEffects": [
+    "**/*.css"
+  ],
   "files": [
     "lib/",
     "README.md",
