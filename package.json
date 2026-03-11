@@ -2,8 +2,14 @@
   "name": "meeting-pane",
   "version": "3.0.1",
   "description": "Solid-compatible Panes: meeting collaborative tool",
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
+  "main": "lib/meeting-pane.js",
+  "types": "index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./lib/meeting-pane.js"
+    }
+  },
   "sideEffects": [
     "**/*.css"
   ],
@@ -13,7 +19,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "clean": "rm -rf dist",
+    "clean": "rm -rf lib",
     "build": "npm run clean && npm run build-dist",
     "build-dist": "webpack --progress",
     "lint": "eslint",
