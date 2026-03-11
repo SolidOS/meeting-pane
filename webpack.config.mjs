@@ -11,7 +11,7 @@ const common = {
   mode: 'production',
   entry: './src/index.js',
   output: {
-    path: path.resolve(process.cwd(), 'dist'),
+    path: path.resolve(process.cwd(), 'lib'),
     filename: 'meetingPane.js',
     library: {
       name: 'MeetingPane',
