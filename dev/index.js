@@ -1,7 +1,8 @@
 import * as logic from 'solid-logic'
-import MeetingPane from '../src/meetingPane'
+import MeetingPane from '../src/index'
 import * as $rdf from 'rdflib'
 import * as UI from 'solid-ui'
+import './dev-global.css'
 
 async function appendMeetingPane (dom, uri) {
   const subject = $rdf.sym(uri)
