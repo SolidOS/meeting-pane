@@ -47,7 +47,7 @@
   display: inline-block !important;
   opacity: 100% !important;
 }
-.meetingPane .meetingToolIcon-yellow {
+.meetingPane .meetingToolIcon-highlighted {
   background-color: yellow;
 }
 
