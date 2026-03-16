@@ -8,7 +8,7 @@ const require = createRequire(import.meta.url)
 
 const common = {
   mode: 'production',
-  entry: './src/index.js',
+  entry: './src/meetingPane.js',
   output: {
     path: path.resolve(process.cwd(), 'lib'),
     filename: 'meetingPane.js',
