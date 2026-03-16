@@ -2,6 +2,10 @@
 
 Bring together schedule, people, materials, discussion around a meeting. 
 
+## Styles
+Styles are imported by the pane and bundled into the JavaScript build.
+Consumers should import the pane module only; no separate CSS import is required.
+
 ## Genertive AI usage
 The SolidOS team is using GitHub Copilot integrated in Visual Studio Code. 
 We have added comments in the code to make it explicit which parts are 100% written by AI.
