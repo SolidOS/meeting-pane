@@ -1075,20 +1075,31 @@ export default {
 
         authn.checkUser().then(webId => {
           if (webId) {
-            loadTypeIndexesFor(kb.sym(webId)).then(function () {
+            const meNode = typeof webId === 'string' ? kb.sym(webId) : webId
+            loadTypeIndexesFor(meNode).then(function (scopes) {
               // Assumes that the type index has an entry for addressbook
+              const privateScope = scopes.find(scope => scope.label === 'private')
+              const chosenScope = privateScope || scopes[0]
+              if (!chosenScope || !chosenScope.index) {
+                complain('No type index available for this user to load participants.')
+                return
+              }
               const options = {
                 defaultNewGroupName: 'Meeting Participants',
                 selectedGroup
               }
               const picker = new UI.widgets.PeoplePicker(
                 context.div,
-                context.index.private[0],
+                chosenScope.index,
                 groupPickedCb,
                 options
               )
               picker.render()
+            }).catch(function (err) {
+              complain('Could not load type indexes for participants: ' + err)
             })
+          } else {
+            complain('Please log in to manage meeting participants.')
           }
         })
       }
