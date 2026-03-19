@@ -1,5 +1,5 @@
 import * as logic from 'solid-logic'
-import MeetingPane from '../src/index'
+import MeetingPane from '../src/meetingPane'
 import * as $rdf from 'rdflib'
 import * as UI from 'solid-ui'
 import './dev-global.css'
