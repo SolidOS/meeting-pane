@@ -3,6 +3,7 @@ import NodePolyfillPlugin from 'node-polyfill-webpack-plugin'
 import { moduleRules } from './webpack.module.rules.mjs'
 import { createRequire } from 'module'
 import TerserPlugin from 'terser-webpack-plugin'
+import CopyPlugin from 'copy-webpack-plugin'
 
 const require = createRequire(import.meta.url)
 
@@ -55,6 +56,14 @@ const normalConfig = {
   },
   plugins: [
     ...(common.plugins || []),
+    new CopyPlugin({
+      patterns: [
+        {
+          from: path.resolve('src/styles'),
+          to: path.resolve('lib/styles'),
+        },
+      ],
+    }),
   ],
   optimization: {
     minimize: false,
@@ -77,6 +86,14 @@ const minConfig = {
   },
   plugins: [
     ...(common.plugins || []),
+    new CopyPlugin({
+      patterns: [
+        {
+          from: path.resolve('src/styles'),
+          to: path.resolve('lib/styles'),
+        },
+      ],
+    }),
   ],
   optimization: {
     minimize: true,
