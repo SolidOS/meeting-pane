@@ -61,7 +61,7 @@
     "rdflib": "^2.3.6",
     "solid-logic": "^4.0.6",
     "solid-ui": "^3.0.5",
-    "typescript": "^5.9.3",
+    "typescript": "^6.0.2",
     "webpack": "^5.104.1",
     "webpack-cli": "^7.0.1",
     "webpack-dev-server": "^5.2.3"
