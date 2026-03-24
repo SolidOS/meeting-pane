@@ -93,7 +93,7 @@ export default {
     const complain = function complain (message, color) {
       console.log(message)
       const pre = dom.createElement('pre')
-      pre.setAttribute('style', 'background-color: ' + color || '#eed' + ';')
+      pre.setAttribute('style', 'background-color: ' + (color || '#eed') + ';')
       div.appendChild(pre)
       pre.appendChild(dom.createTextNode(message))
     }
