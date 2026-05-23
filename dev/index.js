@@ -36,9 +36,10 @@ const loginBanner = document.getElementById('loginBanner')
 loginBanner.appendChild(UI.login.loginStatusBox(document, null, {}))
 
 async function finishLogin () {
-  await logic.authSession.handleIncomingRedirect()
+  await logic.authn.checkUser()
   const session = logic.authSession
-  if (session.info.isLoggedIn) {
+  const isLoggedIn = session?.info?.isLoggedIn ?? session?.isActive ?? Boolean(session?.webId)
+  if (isLoggedIn) {
     console.log(`Logged in as ${session.webId}`)
 
     document.getElementById('loginBanner').innerHTML = `Logged in as ${logic.authn.currentUser().uri}`
