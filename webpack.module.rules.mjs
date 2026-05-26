@@ -11,18 +11,6 @@ export const getModuleRules = function (styleLoader = 'style-loader') {
       use: [styleLoader, 'css-loader'],
     },
     {
-      test: /\.module\.css$/,
-      use: [
-        styleLoader,
-        {
-          loader: 'css-loader',
-          options: {
-            modules: true
-          }
-        }
-      ]
-    },
-    {
       test: /\.ttl$/,
       type: 'asset/source',
     }

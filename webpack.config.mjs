@@ -5,20 +5,10 @@ import { createRequire } from 'module'
 import TerserPlugin from 'terser-webpack-plugin'
 import CopyPlugin from 'copy-webpack-plugin'
 
-const require = createRequire(import.meta.url)
-
 const common = {
-  mode: 'production',
   entry: './src/meetingPane.js',
-  output: {
-    path: path.resolve(process.cwd(), 'lib'),
-    filename: 'meetingPane.js',
-    library: {
-      name: 'MeetingPane',
-      type: 'umd'
-    },
-    globalObject: 'this',
-    clean: false
+  resolve: {
+    extensions: ['.js', '.ts'],
   },
   plugins: [
     new NodePolyfillPlugin()
@@ -27,12 +17,14 @@ const common = {
     rules: moduleRules,
   },
   externals: {
-    'solid-ui': 'UI',
+    'fs': 'null',
+    'node-fetch': 'fetch',
+    'isomorphic-fetch': 'fetch',
+    'text-encoding': 'TextEncoder',
+    '@trust/webcrypto': 'crypto',
+    'rdflib': 'rdflib',
     'solid-logic': 'SolidLogic',
-    rdflib: '$rdf',
-  },
-  resolve: {
-    extensions: ['.js', '.ts'],
+    'solid-ui': 'UI'
   },
   devtool: 'source-map',
 }
