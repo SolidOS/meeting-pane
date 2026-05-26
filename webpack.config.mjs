@@ -1,7 +1,6 @@
 import path from 'path'
 import NodePolyfillPlugin from 'node-polyfill-webpack-plugin'
 import { moduleRules } from './webpack.module.rules.mjs'
-import { createRequire } from 'module'
 import TerserPlugin from 'terser-webpack-plugin'
 import CopyPlugin from 'copy-webpack-plugin'
 
@@ -17,12 +16,12 @@ const common = {
     rules: moduleRules,
   },
   externals: {
-    'fs': 'null',
+    fs: 'null',
     'node-fetch': 'fetch',
     'isomorphic-fetch': 'fetch',
     'text-encoding': 'TextEncoder',
     '@trust/webcrypto': 'crypto',
-    'rdflib': 'rdflib',
+    rdflib: 'rdflib',
     'solid-logic': 'SolidLogic',
     'solid-ui': 'UI'
   },
