@@ -33,16 +33,30 @@ logic.store.fetcher.load(webIdToShow).then(() => {
 // window.onload = () => {
 console.log('document ready')
 const loginBanner = document.getElementById('loginBanner')
-loginBanner.appendChild(UI.login.loginStatusBox(document, null, {}))
+if (loginBanner) {
+  loginBanner.appendChild(UI.login.loginStatusBox(document, null, {}))
+}
 
 async function finishLogin () {
-  await logic.authn.checkUser()
+  const me = await logic.authn.checkUser()
   const session = logic.authSession
-  const isLoggedIn = session?.info?.isLoggedIn ?? session?.isActive ?? Boolean(session?.webId)
-  if (isLoggedIn) {
-    console.log(`Logged in as ${session.webId}`)
+  const sessionWebId = session?.webId ?? session?.info?.webId ?? null
+  const meWebId = me?.uri ?? me?.value ?? null
+  const webIdUri = meWebId ?? sessionWebId
+  const isLoggedIn = Boolean(
+    me ||
+    session?.isActive ||
+    session?.info?.isLoggedIn ||
+    sessionWebId
+  )
 
-    document.getElementById('loginBanner').innerHTML = `Logged in as ${logic.authn.currentUser().uri}`
+  if (isLoggedIn && webIdUri) {
+    console.log(`Logged in as ${webIdUri}`)
+
+    const banner = document.getElementById('loginBanner')
+    if (banner) {
+      banner.innerHTML = `Logged in as ${webIdUri}`
+    }
   } else {
     console.log('The user is not logged in')
     // document.getElementById('loginBanner').innerHTML = '<button onclick="popupLogin()">Log in</button>'
