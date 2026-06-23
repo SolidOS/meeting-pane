@@ -20,7 +20,6 @@
     "test": "echo \"No tests specified\" && exit 0",
     "prepublishOnly": "npm run build && npm run lint",
     "preversion": "npm run lint",
-    "postversion": "git push origin main --follow-tags",
     "watch": "webpack --watch",
     "start": "webpack serve --config webpack.dev.config.mjs --open"
   },
@@ -46,11 +45,6 @@
     "url": "https://github.com/SolidOS/meeting-pane/issues/"
   },
   "homepage": "https://github.com/SolidOS/meeting-pane/",
-  "peerDependencies": {
-    "rdflib": "^2.3.5",
-    "solid-logic": "^4.0.2",
-    "solid-ui": "^3.0.3"
-  },
   "devDependencies": {
     "@babel/preset-env": "^7.28.6",
     "babel-loader": "^10.0.0",
@@ -75,5 +69,10 @@
   },
   "dependencies": {
     "patch-package": "^8.0.1"
-  }
+  },
+  "solidosDependencies": [
+    "rdflib",
+    "solid-logic",
+    "solid-ui"
+  ]
 }
