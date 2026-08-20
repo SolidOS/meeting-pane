@@ -1,6 +1,6 @@
 {
   "name": "meeting-pane",
-  "version": "3.0.2",
+  "version": "3.1.0",
   "description": "Solid-compatible Panes: meeting collaborative tool",
   "main": "dist/meetingPane.js",
   "files": [
@@ -45,8 +45,8 @@
   "homepage": "https://github.com/SolidOS/meeting-pane/",
   "peerDependencies": {
     "rdflib": "^2.3.5",
-    "solid-logic": "^4.0.2",
-    "solid-ui": "^3.0.3"
+    "solid-logic": "^5.0.0",
+    "solid-ui": "^4.0.0"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.28.6",
@@ -58,9 +58,9 @@
     "html-webpack-plugin": "^5.6.6",
     "neostandard": "^0.13.0",
     "node-polyfill-webpack-plugin": "^4.1.0",
-    "rdflib": "^2.3.6",
-    "solid-logic": "^4.0.6",
-    "solid-ui": "^3.0.5",
+    "rdflib": "^2.4.0",
+    "solid-logic": "^5.0.0",
+    "solid-ui": "^4.0.0",
     "typescript": "^6.0.2",
     "webpack": "^5.104.1",
     "webpack-cli": "^7.0.1",
